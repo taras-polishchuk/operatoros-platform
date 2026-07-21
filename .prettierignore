@@ -1,0 +1,6 @@
+node_modules
+dist
+artifacts/reports
+docs/api
+pnpm-lock.yaml
+docs/authorities

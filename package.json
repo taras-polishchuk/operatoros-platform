@@ -1,0 +1,47 @@
+{
+  "name": "operatoros-platform",
+  "version": "1.0.0-rc1",
+  "private": true,
+  "license": "UNLICENSED",
+  "type": "module",
+  "description": "Operator-controlled, local-first, event-evidenced Mission execution platform.",
+  "packageManager": "pnpm@9.15.9",
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "scripts": {
+    "build": "turbo run build",
+    "clean": "turbo run clean",
+    "dev": "turbo run dev --parallel",
+    "typecheck": "tsc --noEmit && turbo run typecheck",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "NODE_NO_WARNINGS=1 vitest run --coverage",
+    "lint": "eslint . --max-warnings 0",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "docs:build": "typedoc --options typedoc.json",
+    "contracts:verify": "tsx tooling/verify-authorities.ts",
+    "architecture:check": "tsx tooling/check-architecture.ts",
+    "spike:persistence": "tsx spikes/persistence/run-matrix.ts",
+    "security:scan": "pnpm audit --audit-level high && node tooling/security-scan.mjs",
+    "licenses:report": "node tooling/license-report.mjs",
+    "sbom": "node tooling/sbom.mjs",
+    "quality": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test:coverage && pnpm build && pnpm contracts:verify && pnpm architecture:check"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.2",
+    "@types/node": "^22.19.1",
+    "@vitest/coverage-v8": "4.1.0",
+    "eslint": "^9.39.2",
+    "prettier": "^3.8.1",
+    "tsx": "4.23.1",
+    "turbo": "^2.6.3",
+    "typedoc": "^0.28.15",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "8.64.0",
+    "vitest": "4.1.0",
+    "zod": "3.25.76",
+    "zod-to-json-schema": "3.25.2"
+  }
+}

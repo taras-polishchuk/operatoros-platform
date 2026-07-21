@@ -1,0 +1,25 @@
+{
+  "name": "@operatoros-platform/recovery-service",
+  "version": "0.0.0-development",
+  "description": "OperatorOS Platform — Checkpoint, recovery lease, snapshot restore, dual-contender semantics (AR-R09, FR-REC-1..4, ST-3)",
+  "type": "module",
+  "private": true,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "build": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@operatoros-platform/contracts": "workspace:*"
+  }
+}

@@ -1,0 +1,69 @@
+{
+  "$ref": "#/definitions/envelope.error",
+  "definitions": {
+    "envelope.error": {
+      "type": "object",
+      "properties": {
+        "error_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "error_code": {
+          "type": "string",
+          "pattern": "^[A-Z][A-Z0-9_]+$"
+        },
+        "deciding_source": {
+          "$ref": "#/definitions/envelope.error/properties/error_id"
+        },
+        "expected": {
+          "type": "object",
+          "additionalProperties": {},
+          "default": {}
+        },
+        "actual": {
+          "type": "object",
+          "additionalProperties": {},
+          "default": {}
+        },
+        "reported_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "retryable": {
+          "type": "boolean"
+        },
+        "human_summary": {
+          "type": "string",
+          "minLength": 1
+        },
+        "machine_details": {
+          "type": "object",
+          "additionalProperties": {},
+          "default": {}
+        },
+        "classification": {
+          "type": "string",
+          "enum": [
+            "public",
+            "workspace-internal",
+            "sensitive",
+            "secret-reference",
+            "prohibited-secret-value"
+          ],
+          "default": "workspace-internal"
+        }
+      },
+      "required": [
+        "error_id",
+        "error_code",
+        "deciding_source",
+        "reported_at",
+        "retryable",
+        "human_summary"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "envelope.error"
+}

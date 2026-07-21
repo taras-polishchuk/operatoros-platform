@@ -1,0 +1,106 @@
+{
+  "$ref": "#/definitions/manifest.extension",
+  "definitions": {
+    "manifest.extension": {
+      "type": "object",
+      "properties": {
+        "extension_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "kind": {
+          "type": "string",
+          "enum": ["plugin", "integration", "dashboard", "telemetry-exporter", "adapter"]
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(?:[-+][0-9A-Za-z.-]+)?$"
+        },
+        "host_compatibility": {
+          "type": "string",
+          "minLength": 1
+        },
+        "entry_points": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/manifest.extension/properties/extension_id"
+          },
+          "minItems": 1
+        },
+        "capability_definitions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/manifest.extension/properties/extension_id"
+          },
+          "default": []
+        },
+        "requested_capabilities": {
+          "$ref": "#/definitions/manifest.extension/properties/capability_definitions"
+        },
+        "security_boundary": {
+          "type": "string",
+          "minLength": 1
+        },
+        "data_classes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "public",
+              "workspace-internal",
+              "sensitive",
+              "secret-reference",
+              "prohibited-secret-value"
+            ]
+          },
+          "minItems": 1
+        },
+        "health_contract": {
+          "type": "string",
+          "minLength": 1
+        },
+        "shutdown_contract": {
+          "type": "string",
+          "minLength": 1
+        },
+        "checkpoint_contract": {
+          "type": "string",
+          "minLength": 1
+        },
+        "migration_contract": {
+          "type": "string",
+          "minLength": 1
+        },
+        "uninstall_contract": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source_identity": {
+          "type": "string",
+          "minLength": 1
+        },
+        "content_digest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      },
+      "required": [
+        "extension_id",
+        "kind",
+        "version",
+        "host_compatibility",
+        "entry_points",
+        "security_boundary",
+        "data_classes",
+        "health_contract",
+        "shutdown_contract",
+        "uninstall_contract",
+        "source_identity",
+        "content_digest"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "manifest.extension"
+}

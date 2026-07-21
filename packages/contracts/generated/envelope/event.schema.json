@@ -1,0 +1,62 @@
+{
+  "$ref": "#/definitions/envelope.event",
+  "definitions": {
+    "envelope.event": {
+      "type": "object",
+      "properties": {
+        "envelope_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "command_id": {
+          "$ref": "#/definitions/envelope.event/properties/envelope_id"
+        },
+        "run_ref": {
+          "$ref": "#/definitions/envelope.event/properties/envelope_id"
+        },
+        "observed_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "stream_topic": {
+          "$ref": "#/definitions/envelope.event/properties/envelope_id"
+        },
+        "subject_identity_ref": {
+          "type": "string",
+          "pattern": "^(identity|service|machine):\\/\\/"
+        },
+        "workspace_ref": {
+          "type": "string",
+          "pattern": "^workspace[_:/-]"
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": {}
+        },
+        "classification": {
+          "type": "string",
+          "enum": [
+            "public",
+            "workspace-internal",
+            "sensitive",
+            "secret-reference",
+            "prohibited-secret-value"
+          ],
+          "default": "workspace-internal"
+        }
+      },
+      "required": [
+        "envelope_id",
+        "command_id",
+        "observed_at",
+        "stream_topic",
+        "subject_identity_ref",
+        "workspace_ref",
+        "payload"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "envelope.event"
+}

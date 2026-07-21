@@ -1,0 +1,92 @@
+{
+  "$ref": "#/definitions/entity.mission-execution-specification",
+  "definitions": {
+    "entity.mission-execution-specification": {
+      "type": "object",
+      "properties": {
+        "entity_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "entity_schema_version": {
+          "type": "string",
+          "const": "1.0.0"
+        },
+        "workspace_ref": {
+          "type": "string",
+          "pattern": "^workspace[_:/-]"
+        },
+        "record_version": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "$ref": "#/definitions/entity.mission-execution-specification/properties/created_at"
+        },
+        "supersedes": {
+          "$ref": "#/definitions/entity.mission-execution-specification/properties/entity_id"
+        },
+        "kind": {
+          "type": "string",
+          "const": "mission-execution-specification"
+        },
+        "state": {
+          "type": "string",
+          "enum": ["draft", "validated", "active", "paused", "retired"]
+        },
+        "mission_ref": {
+          "$ref": "#/definitions/entity.mission-execution-specification/properties/entity_id"
+        },
+        "acceptance_conditions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.mission-execution-specification/properties/entity_id"
+          },
+          "minItems": 1
+        },
+        "subjects": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        },
+        "capability_needs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.mission-execution-specification/properties/entity_id"
+          },
+          "default": []
+        },
+        "policy_declarations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.mission-execution-specification/properties/entity_id"
+          },
+          "default": []
+        }
+      },
+      "required": [
+        "entity_id",
+        "entity_schema_version",
+        "workspace_ref",
+        "record_version",
+        "created_at",
+        "updated_at",
+        "kind",
+        "state",
+        "mission_ref",
+        "acceptance_conditions",
+        "subjects"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "entity.mission-execution-specification"
+}

@@ -1,0 +1,62 @@
+{
+  "$ref": "#/definitions/entity.operator-profile",
+  "definitions": {
+    "entity.operator-profile": {
+      "type": "object",
+      "properties": {
+        "entity_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "entity_schema_version": {
+          "type": "string",
+          "const": "1.0.0"
+        },
+        "workspace_ref": {
+          "type": "string",
+          "pattern": "^workspace[_:/-]"
+        },
+        "record_version": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "$ref": "#/definitions/entity.operator-profile/properties/created_at"
+        },
+        "supersedes": {
+          "$ref": "#/definitions/entity.operator-profile/properties/entity_id"
+        },
+        "kind": {
+          "type": "string",
+          "const": "operator-profile"
+        },
+        "state": {
+          "type": "string",
+          "enum": ["draft", "active", "suspended", "archived"]
+        },
+        "identity_ref": {
+          "type": "string",
+          "pattern": "^(identity|service|machine):\\/\\/"
+        }
+      },
+      "required": [
+        "entity_id",
+        "entity_schema_version",
+        "workspace_ref",
+        "record_version",
+        "created_at",
+        "updated_at",
+        "kind",
+        "state",
+        "identity_ref"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "entity.operator-profile"
+}

@@ -1,0 +1,70 @@
+{
+  "schema_version": 1,
+  "current_version": "1.0.0",
+  "compatibility": "compatibility.json",
+  "contracts": {
+    "entity.operator-profile": {
+      "path": "entity/operator-profile.schema.json"
+    },
+    "entity.workspace": {
+      "path": "entity/workspace.schema.json"
+    },
+    "entity.artifact": {
+      "path": "entity/artifact.schema.json"
+    },
+    "entity.mission-execution-specification": {
+      "path": "entity/mission-execution-specification.schema.json"
+    },
+    "entity.run": {
+      "path": "entity/run.schema.json"
+    },
+    "entity.mission-record": {
+      "path": "entity/mission-record.schema.json"
+    },
+    "entity.agent-registration": {
+      "path": "entity/agent-registration.schema.json"
+    },
+    "entity.extension-installation": {
+      "path": "entity/extension-installation.schema.json"
+    },
+    "entity.capability-grant": {
+      "path": "entity/capability-grant.schema.json"
+    },
+    "entity.schedule": {
+      "path": "entity/schedule.schema.json"
+    },
+    "entity.secret-reference": {
+      "path": "entity/secret-reference.schema.json"
+    },
+    "entity.model-route": {
+      "path": "entity/model-route.schema.json"
+    },
+    "entity.configuration-revision": {
+      "path": "entity/configuration-revision.schema.json"
+    },
+    "entity.event-record": {
+      "path": "entity/event-record.schema.json"
+    },
+    "envelope.command": {
+      "path": "envelope/command.schema.json"
+    },
+    "envelope.query": {
+      "path": "envelope/query.schema.json"
+    },
+    "envelope.event": {
+      "path": "envelope/event.schema.json"
+    },
+    "envelope.error": {
+      "path": "envelope/error.schema.json"
+    },
+    "envelope.mutation": {
+      "path": "envelope/mutation.schema.json"
+    },
+    "manifest.extension": {
+      "path": "manifest/extension.schema.json"
+    },
+    "binding.surface": {
+      "path": "binding/surface.schema.json"
+    }
+  }
+}

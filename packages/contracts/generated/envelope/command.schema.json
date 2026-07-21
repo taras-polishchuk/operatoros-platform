@@ -1,0 +1,84 @@
+{
+  "$ref": "#/definitions/envelope.command",
+  "definitions": {
+    "envelope.command": {
+      "type": "object",
+      "properties": {
+        "command_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "request_key": {
+          "$ref": "#/definitions/envelope.command/properties/command_id"
+        },
+        "command_type": {
+          "$ref": "#/definitions/envelope.command/properties/command_id"
+        },
+        "subject_identity_ref": {
+          "type": "string",
+          "pattern": "^(identity|service|machine):\\/\\/"
+        },
+        "operator_profile_ref": {
+          "$ref": "#/definitions/envelope.command/properties/subject_identity_ref"
+        },
+        "capability_grant_ref": {
+          "$ref": "#/definitions/envelope.command/properties/subject_identity_ref"
+        },
+        "workspace_ref": {
+          "type": "string",
+          "pattern": "^workspace[_:/-]"
+        },
+        "target_ref": {
+          "$ref": "#/definitions/envelope.command/properties/command_id"
+        },
+        "expected_version": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "payload_schema_version": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(?:[-+][0-9A-Za-z.-]+)?$"
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": {}
+        },
+        "correlation_id": {
+          "$ref": "#/definitions/envelope.command/properties/command_id"
+        },
+        "causation_id": {
+          "$ref": "#/definitions/envelope.command/properties/command_id"
+        },
+        "requested_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "classification": {
+          "type": "string",
+          "enum": [
+            "public",
+            "workspace-internal",
+            "sensitive",
+            "secret-reference",
+            "prohibited-secret-value"
+          ],
+          "default": "workspace-internal"
+        }
+      },
+      "required": [
+        "command_id",
+        "request_key",
+        "command_type",
+        "subject_identity_ref",
+        "workspace_ref",
+        "payload_schema_version",
+        "payload",
+        "correlation_id",
+        "requested_at"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "envelope.command"
+}

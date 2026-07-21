@@ -1,0 +1,28 @@
+{
+  "name": "@operatoros-platform/contracts",
+  "version": "0.0.0-development",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "types": "./dist/index.d.ts",
+  "main": "./dist/index.js",
+  "files": [
+    "dist",
+    "generated",
+    "corpus"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json && node ../../tooling/generate-contracts.mjs",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "clean": "node -e \"require('node:fs').rmSync('dist',{recursive:true,force:true});require('node:fs').rmSync('generated',{recursive:true,force:true})\""
+  },
+  "dependencies": {
+    "zod": "3.25.76",
+    "zod-to-json-schema": "3.25.2"
+  }
+}

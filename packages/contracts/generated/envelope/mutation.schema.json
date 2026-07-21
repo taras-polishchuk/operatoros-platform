@@ -1,0 +1,90 @@
+{
+  "$ref": "#/definitions/envelope.mutation",
+  "definitions": {
+    "envelope.mutation": {
+      "type": "object",
+      "properties": {
+        "envelope_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "mutation_id": {
+          "$ref": "#/definitions/envelope.mutation/properties/envelope_id"
+        },
+        "command_id": {
+          "$ref": "#/definitions/envelope.mutation/properties/envelope_id"
+        },
+        "request_key": {
+          "$ref": "#/definitions/envelope.mutation/properties/envelope_id"
+        },
+        "coordinator_component": {
+          "type": "string",
+          "enum": ["workspace-service", "execution-service"]
+        },
+        "aggregate_ref": {
+          "$ref": "#/definitions/envelope.mutation/properties/envelope_id"
+        },
+        "expected_version": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "intended_record_version": {
+          "$ref": "#/definitions/envelope.mutation/properties/expected_version"
+        },
+        "required_event_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/envelope.mutation/properties/envelope_id"
+          },
+          "minItems": 1
+        },
+        "idempotency_result_digest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "state": {
+          "type": "string",
+          "enum": [
+            "prepared",
+            "committed",
+            "uncommitted",
+            "conflict",
+            "evidence-gap",
+            "acknowledged"
+          ]
+        },
+        "prepared_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "committed_at": {
+          "$ref": "#/definitions/envelope.mutation/properties/prepared_at"
+        },
+        "acknowledged_at": {
+          "$ref": "#/definitions/envelope.mutation/properties/prepared_at"
+        },
+        "reconciliation": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "envelope_id",
+        "mutation_id",
+        "command_id",
+        "request_key",
+        "coordinator_component",
+        "aggregate_ref",
+        "expected_version",
+        "intended_record_version",
+        "required_event_ids",
+        "idempotency_result_digest",
+        "state",
+        "prepared_at"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "envelope.mutation"
+}

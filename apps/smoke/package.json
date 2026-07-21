@@ -1,0 +1,37 @@
+{
+  "name": "@operatoros-platform/smoke",
+  "version": "1.0.0-rc1",
+  "description": "OperatorOS Platform — End-to-end smoke wiring all 13 packages into one process: register agent → grant capability → activate extension → host-tenant run → distributed anchor.",
+  "type": "module",
+  "private": true,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "build": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@operatoros-platform/agent-execution": "workspace:*",
+    "@operatoros-platform/contracts": "workspace:*",
+    "@operatoros-platform/distributed-coordination": "workspace:*",
+    "@operatoros-platform/evidence-service": "workspace:*",
+    "@operatoros-platform/execution-service": "workspace:*",
+    "@operatoros-platform/extension-runtime": "workspace:*",
+    "@operatoros-platform/governance-service": "workspace:*",
+    "@operatoros-platform/hosted-runtime": "workspace:*",
+    "@operatoros-platform/interface-host": "workspace:*",
+    "@operatoros-platform/recovery-service": "workspace:*",
+    "@operatoros-platform/secrets-service": "workspace:*",
+    "@operatoros-platform/v08-importer": "workspace:*",
+    "@operatoros-platform/workspace-service": "workspace:*"
+  }
+}

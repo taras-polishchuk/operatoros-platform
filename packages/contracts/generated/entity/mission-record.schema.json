@@ -1,0 +1,86 @@
+{
+  "$ref": "#/definitions/entity.mission-record",
+  "definitions": {
+    "entity.mission-record": {
+      "type": "object",
+      "properties": {
+        "entity_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "entity_schema_version": {
+          "type": "string",
+          "const": "1.0.0"
+        },
+        "workspace_ref": {
+          "type": "string",
+          "pattern": "^workspace[_:/-]"
+        },
+        "record_version": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "$ref": "#/definitions/entity.mission-record/properties/created_at"
+        },
+        "supersedes": {
+          "$ref": "#/definitions/entity.mission-record/properties/entity_id"
+        },
+        "kind": {
+          "type": "string",
+          "const": "mission-record"
+        },
+        "state": {
+          "type": "string",
+          "enum": ["open", "sealing", "sealed", "corrected"]
+        },
+        "run_ref": {
+          "$ref": "#/definitions/entity.mission-record/properties/entity_id"
+        },
+        "created_event_id": {
+          "$ref": "#/definitions/entity.mission-record/properties/entity_id"
+        },
+        "terminal_event_id": {
+          "$ref": "#/definitions/entity.mission-record/properties/entity_id"
+        },
+        "terminal_outcome": {
+          "type": "string",
+          "enum": ["succeeded", "failed", "cancelled"]
+        },
+        "referenced_artifact_refs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.mission-record/properties/entity_id"
+          },
+          "default": []
+        },
+        "pinned_policy_refs": {
+          "$ref": "#/definitions/entity.mission-record/properties/referenced_artifact_refs"
+        },
+        "integrity_digest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      },
+      "required": [
+        "entity_id",
+        "entity_schema_version",
+        "workspace_ref",
+        "record_version",
+        "created_at",
+        "updated_at",
+        "kind",
+        "state",
+        "run_ref",
+        "created_event_id"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "entity.mission-record"
+}

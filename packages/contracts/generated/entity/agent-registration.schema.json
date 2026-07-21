@@ -1,0 +1,86 @@
+{
+  "$ref": "#/definitions/entity.agent-registration",
+  "definitions": {
+    "entity.agent-registration": {
+      "type": "object",
+      "properties": {
+        "entity_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "entity_schema_version": {
+          "type": "string",
+          "const": "1.0.0"
+        },
+        "workspace_ref": {
+          "type": "string",
+          "pattern": "^workspace[_:/-]"
+        },
+        "record_version": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "$ref": "#/definitions/entity.agent-registration/properties/created_at"
+        },
+        "supersedes": {
+          "$ref": "#/definitions/entity.agent-registration/properties/entity_id"
+        },
+        "kind": {
+          "type": "string",
+          "const": "agent-registration"
+        },
+        "state": {
+          "type": "string",
+          "enum": ["draft", "active", "suspended", "retired"]
+        },
+        "agent_id": {
+          "$ref": "#/definitions/entity.agent-registration/properties/entity_id"
+        },
+        "typed_responsibility": {
+          "$ref": "#/definitions/entity.agent-registration/properties/entity_id"
+        },
+        "identity_class": {
+          "type": "string",
+          "enum": ["user", "service", "machine"]
+        },
+        "capability_definitions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/entity.agent-registration/properties/entity_id"
+          },
+          "default": []
+        },
+        "security_boundary_ref": {
+          "$ref": "#/definitions/entity.agent-registration/properties/entity_id"
+        },
+        "isolation_tier": {
+          "type": "string",
+          "enum": ["T0", "T1", "T2", "T3"]
+        }
+      },
+      "required": [
+        "entity_id",
+        "entity_schema_version",
+        "workspace_ref",
+        "record_version",
+        "created_at",
+        "updated_at",
+        "kind",
+        "state",
+        "agent_id",
+        "typed_responsibility",
+        "identity_class",
+        "security_boundary_ref",
+        "isolation_tier"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "entity.agent-registration"
+}

@@ -1,0 +1,50 @@
+{
+  "$ref": "#/definitions/binding.surface",
+  "definitions": {
+    "binding.surface": {
+      "type": "object",
+      "properties": {
+        "surface_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "transport": {
+          "type": "string",
+          "enum": ["cli", "http", "sdk", "telemetry"]
+        },
+        "handshake": {
+          "type": "string",
+          "enum": ["none", "identity", "service", "machine"]
+        },
+        "idempotency": {
+          "type": "boolean"
+        },
+        "pagination": {
+          "type": "boolean"
+        },
+        "streaming": {
+          "type": "boolean"
+        },
+        "offline": {
+          "type": "boolean"
+        },
+        "capability_grant_ref": {
+          "type": "string",
+          "pattern": "^(identity|service|machine):\\/\\/"
+        }
+      },
+      "required": [
+        "surface_id",
+        "transport",
+        "handshake",
+        "idempotency",
+        "pagination",
+        "streaming",
+        "offline"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "binding.surface"
+}

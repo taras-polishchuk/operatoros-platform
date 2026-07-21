@@ -1,0 +1,78 @@
+{
+  "$ref": "#/definitions/entity.model-route",
+  "definitions": {
+    "entity.model-route": {
+      "type": "object",
+      "properties": {
+        "entity_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "entity_schema_version": {
+          "type": "string",
+          "const": "1.0.0"
+        },
+        "workspace_ref": {
+          "type": "string",
+          "pattern": "^workspace[_:/-]"
+        },
+        "record_version": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "$ref": "#/definitions/entity.model-route/properties/created_at"
+        },
+        "supersedes": {
+          "$ref": "#/definitions/entity.model-route/properties/entity_id"
+        },
+        "kind": {
+          "type": "string",
+          "const": "model-route"
+        },
+        "state": {
+          "type": "string",
+          "enum": ["draft", "active", "suspended", "superseded", "retired"]
+        },
+        "route_id": {
+          "$ref": "#/definitions/entity.model-route/properties/entity_id"
+        },
+        "provider_ref": {
+          "$ref": "#/definitions/entity.model-route/properties/entity_id"
+        },
+        "model_id": {
+          "$ref": "#/definitions/entity.model-route/properties/entity_id"
+        },
+        "availability_policy": {
+          "type": "string",
+          "minLength": 1
+        },
+        "capability_grant_ref": {
+          "$ref": "#/definitions/entity.model-route/properties/entity_id"
+        }
+      },
+      "required": [
+        "entity_id",
+        "entity_schema_version",
+        "workspace_ref",
+        "record_version",
+        "created_at",
+        "updated_at",
+        "kind",
+        "state",
+        "route_id",
+        "provider_ref",
+        "model_id",
+        "availability_policy",
+        "capability_grant_ref"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "entity.model-route"
+}

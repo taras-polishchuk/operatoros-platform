@@ -1,0 +1,122 @@
+{
+  "$ref": "#/definitions/entity.event-record",
+  "definitions": {
+    "entity.event-record": {
+      "type": "object",
+      "properties": {
+        "entity_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "entity_schema_version": {
+          "type": "string",
+          "const": "1.0.0"
+        },
+        "workspace_ref": {
+          "type": "string",
+          "pattern": "^workspace[_:/-]"
+        },
+        "record_version": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "$ref": "#/definitions/entity.event-record/properties/created_at"
+        },
+        "supersedes": {
+          "$ref": "#/definitions/entity.event-record/properties/entity_id"
+        },
+        "kind": {
+          "type": "string",
+          "const": "event-record"
+        },
+        "state": {
+          "type": "string",
+          "enum": ["recorded", "archived"]
+        },
+        "event_id": {
+          "$ref": "#/definitions/entity.event-record/properties/entity_id"
+        },
+        "event_type": {
+          "type": "string",
+          "minLength": 1
+        },
+        "schema_version": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(?:[-+][0-9A-Za-z.-]+)?$"
+        },
+        "recorded_at": {
+          "$ref": "#/definitions/entity.event-record/properties/created_at"
+        },
+        "subject_identity_ref": {
+          "type": "string",
+          "pattern": "^(identity|service|machine):\\/\\/"
+        },
+        "run_ref": {
+          "$ref": "#/definitions/entity.event-record/properties/entity_id"
+        },
+        "command_id": {
+          "$ref": "#/definitions/entity.event-record/properties/entity_id"
+        },
+        "aggregate_ref": {
+          "$ref": "#/definitions/entity.event-record/properties/entity_id"
+        },
+        "aggregate_version": {
+          "$ref": "#/definitions/entity.event-record/properties/record_version"
+        },
+        "correlation_id": {
+          "$ref": "#/definitions/entity.event-record/properties/entity_id"
+        },
+        "causation_id": {
+          "$ref": "#/definitions/entity.event-record/properties/entity_id"
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": {}
+        },
+        "payload_digest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "sensitivity_class": {
+          "type": "string",
+          "enum": [
+            "public",
+            "workspace-internal",
+            "sensitive",
+            "secret-reference",
+            "prohibited-secret-value"
+          ]
+        }
+      },
+      "required": [
+        "entity_id",
+        "entity_schema_version",
+        "workspace_ref",
+        "record_version",
+        "created_at",
+        "updated_at",
+        "kind",
+        "state",
+        "event_id",
+        "event_type",
+        "schema_version",
+        "recorded_at",
+        "subject_identity_ref",
+        "aggregate_ref",
+        "aggregate_version",
+        "correlation_id",
+        "payload",
+        "payload_digest",
+        "sensitivity_class"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "entity.event-record"
+}

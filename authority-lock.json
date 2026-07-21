@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "locked_at": "2026-07-19",
+  "authorities": {
+    "domain-model.md": {
+      "source": "/home/taras/projects/OPERATOROS-PLATFORM-DOMAIN-MODEL-2026-07-19.md",
+      "sha256": "14a99bff255ab54b9ed62165f976b365dbc3cf5969f64561674d5634e8ba71ab"
+    },
+    "functional-spec.md": {
+      "source": "/home/taras/projects/OPERATOROS-PLATFORM-FUNCTIONAL-SPEC-2026-07-19.md",
+      "sha256": "5225023e2ac4e93d16ba37d437beb0bb3f0fd76da5f71c6472c58cf6d48d6005"
+    },
+    "architecture.md": {
+      "source": "/home/taras/projects/OPERATOROS-PLATFORM-ARCHITECTURE-2026-07-19.md",
+      "sha256": "1e79049d9ae5a328556378ff8235525cd0f692bfa317fd7da6dc2bcdb1f27610"
+    },
+    "architecture-validation.md": {
+      "source": "/home/taras/projects/OPERATOROS-PLATFORM-ARCHITECTURE-VALIDATION-2026-07-19.md",
+      "sha256": "a2ff530baf89fb15c619e6c88725e6a0862c5a436975c8d8352f44f4bb8804e3"
+    },
+    "implementation-roadmap.md": {
+      "source": "/home/taras/projects/OPERATOROS-PLATFORM-IMPLEMENTATION-ROADMAP-2026-07-19.md",
+      "sha256": "add6035997d57639ca0c6b89dbd79ff57109a9e72053ce2ac3b7263103b547e1"
+    },
+    "test-strategy.md": {
+      "source": "/home/taras/projects/OPERATOROS-PLATFORM-TEST-STRATEGY-2026-07-19.md",
+      "sha256": "07087550ba32857c6b5e0e5eb3504aaa22d42eabfe717ea169bfbca7be37afbc"
+    },
+    "final-consistency-audit.md": {
+      "source": "/home/taras/projects/OPERATOROS-PLATFORM-FINAL-CONSISTENCY-AUDIT-2026-07-19.md",
+      "sha256": "3004153bf175025a022c9d33607c4d63b13750085b823c7201a31d9b5ad3e795"
+    },
+    "final-design-report.md": {
+      "source": "/home/taras/projects/OPERATOROS-PLATFORM-FINAL-REPORT-2026-07-19.md",
+      "sha256": "a40301e4419ca104e25304319b25a15240330b6440bf234da61117fb0a3c7ad1"
+    }
+  }
+}

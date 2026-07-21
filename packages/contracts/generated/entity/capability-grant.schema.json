@@ -1,0 +1,88 @@
+{
+  "$ref": "#/definitions/entity.capability-grant",
+  "definitions": {
+    "entity.capability-grant": {
+      "type": "object",
+      "properties": {
+        "entity_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "entity_schema_version": {
+          "type": "string",
+          "const": "1.0.0"
+        },
+        "workspace_ref": {
+          "type": "string",
+          "pattern": "^workspace[_:/-]"
+        },
+        "record_version": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "$ref": "#/definitions/entity.capability-grant/properties/created_at"
+        },
+        "supersedes": {
+          "$ref": "#/definitions/entity.capability-grant/properties/entity_id"
+        },
+        "kind": {
+          "type": "string",
+          "const": "capability-grant"
+        },
+        "state": {
+          "type": "string",
+          "enum": ["draft", "active", "suspended", "revoked"]
+        },
+        "grant_id": {
+          "$ref": "#/definitions/entity.capability-grant/properties/entity_id"
+        },
+        "subject_ref": {
+          "type": "string",
+          "pattern": "^(identity|service|machine):\\/\\/"
+        },
+        "capability_definition_ref": {
+          "$ref": "#/definitions/entity.capability-grant/properties/entity_id"
+        },
+        "scope": {
+          "type": "string",
+          "minLength": 1
+        },
+        "granted_at": {
+          "$ref": "#/definitions/entity.capability-grant/properties/created_at"
+        },
+        "expires_at": {
+          "$ref": "#/definitions/entity.capability-grant/properties/created_at"
+        },
+        "revoker_ref": {
+          "$ref": "#/definitions/entity.capability-grant/properties/subject_ref"
+        },
+        "successor": {
+          "$ref": "#/definitions/entity.capability-grant/properties/entity_id"
+        }
+      },
+      "required": [
+        "entity_id",
+        "entity_schema_version",
+        "workspace_ref",
+        "record_version",
+        "created_at",
+        "updated_at",
+        "kind",
+        "state",
+        "grant_id",
+        "subject_ref",
+        "capability_definition_ref",
+        "scope",
+        "granted_at"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "entity.capability-grant"
+}

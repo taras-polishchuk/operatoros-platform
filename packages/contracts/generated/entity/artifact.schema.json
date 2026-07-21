@@ -1,0 +1,65 @@
+{
+  "$ref": "#/definitions/entity.artifact",
+  "definitions": {
+    "entity.artifact": {
+      "type": "object",
+      "properties": {
+        "entity_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "entity_schema_version": {
+          "type": "string",
+          "const": "1.0.0"
+        },
+        "workspace_ref": {
+          "type": "string",
+          "pattern": "^workspace[_:/-]"
+        },
+        "record_version": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "$ref": "#/definitions/entity.artifact/properties/created_at"
+        },
+        "supersedes": {
+          "$ref": "#/definitions/entity.artifact/properties/entity_id"
+        },
+        "kind": {
+          "type": "string",
+          "const": "artifact"
+        },
+        "state": {
+          "type": "string",
+          "enum": ["draft", "validated", "active", "superseded", "archived"]
+        },
+        "artifact_kind": {
+          "$ref": "#/definitions/entity.artifact/properties/entity_id"
+        },
+        "content_ref": {
+          "$ref": "#/definitions/entity.artifact/properties/entity_id"
+        }
+      },
+      "required": [
+        "entity_id",
+        "entity_schema_version",
+        "workspace_ref",
+        "record_version",
+        "created_at",
+        "updated_at",
+        "kind",
+        "state",
+        "artifact_kind",
+        "content_ref"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "entity.artifact"
+}

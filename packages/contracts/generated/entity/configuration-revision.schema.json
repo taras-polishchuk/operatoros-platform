@@ -1,0 +1,83 @@
+{
+  "$ref": "#/definitions/entity.configuration-revision",
+  "definitions": {
+    "entity.configuration-revision": {
+      "type": "object",
+      "properties": {
+        "entity_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "entity_schema_version": {
+          "type": "string",
+          "const": "1.0.0"
+        },
+        "workspace_ref": {
+          "type": "string",
+          "pattern": "^workspace[_:/-]"
+        },
+        "record_version": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "$ref": "#/definitions/entity.configuration-revision/properties/created_at"
+        },
+        "supersedes": {
+          "$ref": "#/definitions/entity.configuration-revision/properties/entity_id"
+        },
+        "kind": {
+          "type": "string",
+          "const": "configuration-revision"
+        },
+        "state": {
+          "type": "string",
+          "enum": ["draft", "validated", "active", "superseded", "retired"]
+        },
+        "config_ref": {
+          "$ref": "#/definitions/entity.configuration-revision/properties/entity_id"
+        },
+        "scope": {
+          "type": "string",
+          "enum": ["deployment-profile", "workspace", "mission", "run"]
+        },
+        "precedence": {
+          "type": "integer"
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": {}
+        },
+        "digest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "successor": {
+          "$ref": "#/definitions/entity.configuration-revision/properties/entity_id"
+        }
+      },
+      "required": [
+        "entity_id",
+        "entity_schema_version",
+        "workspace_ref",
+        "record_version",
+        "created_at",
+        "updated_at",
+        "kind",
+        "state",
+        "config_ref",
+        "scope",
+        "precedence",
+        "payload",
+        "digest"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "entity.configuration-revision"
+}

@@ -1,0 +1,26 @@
+{
+  "name": "@operatoros-platform/distributed-coordination",
+  "version": "0.0.0-development",
+  "description": "OperatorOS Platform — Distributed coordination: cross-host replication, fencing-token + lease coordination, snapshot reconcile, distributed consistency",
+  "type": "module",
+  "private": true,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "build": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@operatoros-platform/contracts": "workspace:*",
+    "@operatoros-platform/recovery-service": "workspace:*"
+  }
+}

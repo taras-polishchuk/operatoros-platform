@@ -1,0 +1,13 @@
+{
+  "entryPoints": [
+    "packages/contracts/src/index.ts",
+    "packages/workspace-service/src/index.ts",
+    "packages/execution-service/src/index.ts",
+    "packages/evidence-service/src/index.ts",
+    "packages/interface-host/src/index.ts"
+  ],
+  "out": "docs/api",
+  "excludePrivate": true,
+  "excludeInternal": true,
+  "readme": "README.md"
+}

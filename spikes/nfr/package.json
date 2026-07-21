@@ -1,0 +1,16 @@
+{
+  "name": "@operatoros-platform/nfr-spike",
+  "version": "0.0.0-development",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@operatoros-platform/contracts": "workspace:*",
+    "@operatoros-platform/evidence-service": "workspace:*",
+    "@operatoros-platform/workspace-service": "workspace:*",
+    "@operatoros-platform/secrets-service": "workspace:*",
+    "@operatoros-platform/recovery-service": "workspace:*"
+  }
+}

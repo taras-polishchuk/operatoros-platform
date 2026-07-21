@@ -1,0 +1,26 @@
+{
+  "name": "@operatoros-platform/v08-importer",
+  "version": "0.0.0-development",
+  "description": "OperatorOS Platform — non-destructive importer for OperatorOS v0.8.x entities (FR-DEP-1, AR-R16)",
+  "type": "module",
+  "private": true,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "build": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@operatoros-platform/contracts": "workspace:*",
+    "@operatoros-platform/workspace-service": "workspace:*"
+  }
+}

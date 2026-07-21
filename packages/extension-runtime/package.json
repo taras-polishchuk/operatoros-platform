@@ -1,0 +1,27 @@
+{
+  "name": "@operatoros-platform/extension-runtime",
+  "version": "0.0.0-development",
+  "description": "OperatorOS Platform — Extension Runtime: staged→active lifecycle, capability grant enforcement at the extension boundary, uninstall/retire flow",
+  "type": "module",
+  "private": true,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "build": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@operatoros-platform/contracts": "workspace:*",
+    "@operatoros-platform/governance-service": "workspace:*",
+    "@operatoros-platform/secrets-service": "workspace:*"
+  }
+}

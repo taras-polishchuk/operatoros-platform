@@ -1,0 +1,147 @@
+{
+  "schema_version": 1,
+  "cases": [
+    {
+      "id": "invalid-entity-lifecycle-state",
+      "contract": "entity.run",
+      "value": {
+        "entity_id": "run_invalid",
+        "entity_schema_version": "1.0.0",
+        "workspace_ref": "workspace_01",
+        "record_version": 1,
+        "created_at": "2026-07-19T18:00:00.000Z",
+        "updated_at": "2026-07-19T18:00:00.000Z",
+        "kind": "run",
+        "state": "invented",
+        "mission_ref": "mission_01",
+        "specification_ref": "spec_01",
+        "owning_operator_ref": "identity://operator/taras",
+        "initiated_by_command_id": "cmd_01",
+        "started_at": "2026-07-19T18:00:00.000Z"
+      },
+      "expected_issue_path": "state"
+    },
+    {
+      "id": "invalid-event-record-missing-workspace-ref",
+      "contract": "entity.event-record",
+      "value": {
+        "kind": "event-record",
+        "entity_id": "event_01",
+        "entity_schema_version": "1.0.0",
+        "record_version": 1,
+        "created_at": "2026-07-19T18:00:00.000Z",
+        "updated_at": "2026-07-19T18:00:00.000Z",
+        "state": "recorded",
+        "event_id": "event_01",
+        "event_type": "run.created",
+        "schema_version": "1.0.0",
+        "recorded_at": "2026-07-19T18:00:00.000Z",
+        "subject_identity_ref": "identity://operator/taras",
+        "aggregate_ref": "run_01",
+        "aggregate_version": 1,
+        "correlation_id": "cor_01",
+        "payload": {},
+        "payload_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "sensitivity_class": "workspace-internal"
+      },
+      "expected_issue_path": "workspace_ref"
+    },
+    {
+      "id": "invalid-extension-prohibited-class",
+      "contract": "manifest.extension",
+      "value": {
+        "extension_id": "extension_01",
+        "kind": "plugin",
+        "version": "1.0.0",
+        "host_compatibility": ">=1.0.0",
+        "entry_points": ["invoke://run"],
+        "capability_definitions": ["capability.read"],
+        "requested_capabilities": ["capability.read"],
+        "security_boundary": "boundary_t1",
+        "data_classes": [
+          "public",
+          "workspace-internal",
+          "sensitive",
+          "secret-reference",
+          "super-secret"
+        ],
+        "health_contract": "http.get /healthz",
+        "shutdown_contract": "SIGTERM drain",
+        "uninstall_contract": "remove executable and credentials",
+        "source_identity": "identity://operator/taras",
+        "content_digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      },
+      "expected_issue_path": "data_classes.4"
+    },
+    {
+      "id": "invalid-agent-registration-missing-identity-class",
+      "contract": "entity.agent-registration",
+      "value": {
+        "entity_id": "agent_01",
+        "entity_schema_version": "1.0.0",
+        "workspace_ref": "workspace_01",
+        "record_version": 1,
+        "created_at": "2026-07-19T18:00:00.000Z",
+        "updated_at": "2026-07-19T18:00:00.000Z",
+        "kind": "agent-registration",
+        "state": "active",
+        "agent_id": "agent.reviewer",
+        "typed_responsibility": "review",
+        "capability_definitions": ["capability.review"],
+        "security_boundary_ref": "boundary_t1",
+        "isolation_tier": "T1"
+      },
+      "expected_issue_path": "identity_class"
+    },
+    {
+      "id": "invalid-specification-missing-subjects",
+      "contract": "entity.mission-execution-specification",
+      "value": {
+        "entity_id": "spec_01",
+        "entity_schema_version": "1.0.0",
+        "workspace_ref": "workspace_01",
+        "record_version": 1,
+        "created_at": "2026-07-19T18:00:00.000Z",
+        "updated_at": "2026-07-19T18:00:00.000Z",
+        "kind": "mission-execution-specification",
+        "state": "validated",
+        "mission_ref": "mission_01",
+        "acceptance_conditions": ["all obligations met"],
+        "capability_needs": [],
+        "policy_declarations": []
+      },
+      "expected_issue_path": "subjects"
+    },
+    {
+      "id": "invalid-mutation-envelope-empty-events",
+      "contract": "envelope.mutation",
+      "value": {
+        "envelope_id": "env_01",
+        "mutation_id": "mutation_01",
+        "command_id": "cmd_01",
+        "request_key": "req_01",
+        "coordinator_component": "workspace-service",
+        "aggregate_ref": "workspace_01",
+        "expected_version": 0,
+        "intended_record_version": 1,
+        "required_event_ids": [],
+        "idempotency_result_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "state": "prepared",
+        "prepared_at": "2026-07-19T18:00:00.000Z"
+      },
+      "expected_issue_path": "required_event_ids"
+    },
+    {
+      "id": "invalid-query-unbounded-limit",
+      "contract": "envelope.query",
+      "value": {
+        "query_type": "workspace.list",
+        "subject_identity_ref": "identity://operator/taras",
+        "workspace_ref": "workspace_01",
+        "filter": {},
+        "limit": 1001
+      },
+      "expected_issue_path": "limit"
+    }
+  ]
+}

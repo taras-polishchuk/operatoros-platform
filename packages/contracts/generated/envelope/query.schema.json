@@ -1,0 +1,45 @@
+{
+  "$ref": "#/definitions/envelope.query",
+  "definitions": {
+    "envelope.query": {
+      "type": "object",
+      "properties": {
+        "query_type": {
+          "type": "string",
+          "minLength": 1
+        },
+        "subject_identity_ref": {
+          "type": "string",
+          "pattern": "^(identity|service|machine):\\/\\/"
+        },
+        "workspace_ref": {
+          "type": "string",
+          "pattern": "^workspace[_:/-]"
+        },
+        "filter": {
+          "type": "object",
+          "additionalProperties": {},
+          "default": {}
+        },
+        "cursor": {
+          "$ref": "#/definitions/envelope.query/properties/query_type"
+        },
+        "limit": {
+          "type": "integer",
+          "exclusiveMinimum": 0,
+          "maximum": 1000,
+          "default": 50
+        },
+        "projection_freshness_requirement": {
+          "type": "string",
+          "enum": ["authoritative", "rebuildable-projection", "either"],
+          "default": "either"
+        }
+      },
+      "required": ["query_type", "subject_identity_ref", "workspace_ref"],
+      "additionalProperties": false
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "envelope.query"
+}

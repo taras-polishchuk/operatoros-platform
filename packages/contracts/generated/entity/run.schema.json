@@ -1,0 +1,106 @@
+{
+  "$ref": "#/definitions/entity.run",
+  "definitions": {
+    "entity.run": {
+      "type": "object",
+      "properties": {
+        "entity_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "entity_schema_version": {
+          "type": "string",
+          "const": "1.0.0"
+        },
+        "workspace_ref": {
+          "type": "string",
+          "pattern": "^workspace[_:/-]"
+        },
+        "record_version": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "$ref": "#/definitions/entity.run/properties/created_at"
+        },
+        "supersedes": {
+          "$ref": "#/definitions/entity.run/properties/entity_id"
+        },
+        "kind": {
+          "type": "string",
+          "const": "run"
+        },
+        "state": {
+          "type": "string",
+          "enum": [
+            "queued",
+            "running",
+            "paused",
+            "interrupted",
+            "recovering",
+            "succeeded",
+            "failed",
+            "cancelled",
+            "expired"
+          ]
+        },
+        "mission_ref": {
+          "$ref": "#/definitions/entity.run/properties/entity_id"
+        },
+        "specification_ref": {
+          "$ref": "#/definitions/entity.run/properties/entity_id"
+        },
+        "mission_record_ref": {
+          "$ref": "#/definitions/entity.run/properties/entity_id"
+        },
+        "checkpoint_ref": {
+          "$ref": "#/definitions/entity.run/properties/entity_id"
+        },
+        "owning_operator_ref": {
+          "type": "string",
+          "pattern": "^(identity|service|machine):\\/\\/"
+        },
+        "owning_agent_ref": {
+          "$ref": "#/definitions/entity.run/properties/owning_operator_ref"
+        },
+        "initiated_by_command_id": {
+          "$ref": "#/definitions/entity.run/properties/entity_id"
+        },
+        "started_at": {
+          "$ref": "#/definitions/entity.run/properties/created_at"
+        },
+        "terminal_at": {
+          "$ref": "#/definitions/entity.run/properties/created_at"
+        },
+        "terminal_event_id": {
+          "$ref": "#/definitions/entity.run/properties/entity_id"
+        },
+        "resume_cursor": {
+          "$ref": "#/definitions/entity.run/properties/entity_id"
+        }
+      },
+      "required": [
+        "entity_id",
+        "entity_schema_version",
+        "workspace_ref",
+        "record_version",
+        "created_at",
+        "updated_at",
+        "kind",
+        "state",
+        "mission_ref",
+        "specification_ref",
+        "owning_operator_ref",
+        "initiated_by_command_id",
+        "started_at"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "entity.run"
+}

@@ -1,0 +1,25 @@
+{
+  "name": "@operatoros-platform/governance-service",
+  "version": "0.0.0-development",
+  "description": "OperatorOS Platform — Operator Profile, Capability Grant, Configuration Revision, Effective Configuration projection",
+  "type": "module",
+  "private": true,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "build": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@operatoros-platform/contracts": "workspace:*"
+  }
+}
