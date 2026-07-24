@@ -529,7 +529,7 @@ export function createSqliteGovernanceStore(options: { databasePath: string }) {
         ) {
           return {
             outcome: 'rejected',
-            reason: `EQUAL_PRECEDENCE_CONFLICT:${String(currentRow.scope)}:${String(currentRow.precedence)}`,
+            reason: `EQUAL_PRECEDENCE_CONFLICT:${currentRow.scope}:${String(currentRow.precedence)}`,
           };
         }
       }
