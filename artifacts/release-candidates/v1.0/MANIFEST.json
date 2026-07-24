@@ -1,0 +1,161 @@
+{
+  "manifest_type": "v1.0-release-bundle-manifest",
+  "schema_version": "1.0.0",
+  "product": "OperatorOS Platform",
+  "version": "1.0.0",
+  "release_candidate": "v1.0",
+  "produced_at": "2026-07-24",
+  "repository_url": "https://github.com/taras-polishchuk/operatoros-platform",
+  "architecture_sha256": "1e79049d9ae5a328556378ff8235525cd0f692bfa317fd7da6dc2bcdb1f27610",
+  "authority_lock_present": true,
+  "artifacts": [
+    {
+      "name": "v1.0 Release Manifest",
+      "path": "artifacts/release-candidates/v1.0/rc1-manifest.json",
+      "kind": "json",
+      "role": "primary",
+      "sha256": "ff0c190e8a7633e192b45136c76413ef9d0387d766f8f4baa94671d92df1baba",
+      "description": "Single-locked v1.0 release manifest. Reports milestones, gates, NFRs, packages, and per-artifact evidence pointers."
+    },
+    {
+      "name": "v1.0 Changelog",
+      "path": "artifacts/release-candidates/v1.0/CHANGELOG.md",
+      "kind": "markdown",
+      "role": "release-notes",
+      "sha256": "7172c2f6fad3acfa330750e0fd3fbc08507c46bdb37d63a44f4a23f67d8fc2c1",
+      "description": "v1.0.0 + v1.0.0-rc1 release notes; documents the 4-day public-readiness window between rc1 and v1.0."
+    },
+    {
+      "name": "v1.0 Final Report",
+      "path": "artifacts/release-candidates/v1.0/final-report.md",
+      "kind": "markdown",
+      "role": "report",
+      "sha256": "dda09435c6c779525ba129a61d20a4ff2ae64931c40ac20bd7751075ae859d37",
+      "description": "v1.0 candidate report covering local validation and the pending publication boundary."
+    },
+    {
+      "name": "v1.0 Technical Debt Register",
+      "path": "artifacts/release-candidates/v1.0/technical-debt.md",
+      "kind": "markdown",
+      "role": "tech-debt",
+      "sha256": "7143528833099b2c35ecbad02b5b54538ddd9cf1d57d19c0b95a76e74c5f9127",
+      "description": "TD-001..TD-006 carried forward from rc1; TD-007 added to capture the duplication between rc1/ and v1.0/ copies of this file."
+    },
+    {
+      "name": "v1.1 Backlog",
+      "path": "artifacts/release-candidates/v1.0/v1.1-backlog.md",
+      "kind": "markdown",
+      "role": "backlog",
+      "sha256": "0b2c0bfcd5d188e9b4a1fe5016a4eaa7851c14a3fa30cd9be320f466de94a2a8",
+      "description": "Storage, Distributed, Security, Observability, Tooling, and Documentation backlog carried forward from rc1. No new items added by v1.0 public-readiness work."
+    },
+    {
+      "name": "v0.8 → v1.0 Migration Notes",
+      "path": "artifacts/release-candidates/v1.0/migration-from-v08.md",
+      "kind": "markdown",
+      "role": "migration",
+      "sha256": "d3a958d723175f0511e09a963cf89b4300f507766cb9fcadab329520afba9ead",
+      "description": "OperatorOS v0.8.x → OperatorOS Platform v1.0 migration procedure. v0.8 importer contract is unchanged between rc1 and v1.0."
+    },
+    {
+      "name": "Architecture Deltas",
+      "path": "artifacts/release-candidates/v1.0/architecture-deltas.md",
+      "kind": "markdown",
+      "role": "architecture-deltas",
+      "sha256": "2107f6308786b6b103589aa64817234b896e38437c70eee3f5d887aa9c9693ed",
+      "description": "D-001..D-006 deviations from the frozen architecture, carried forward from rc1. No new deltas introduced by v1.0 public-readiness work."
+    },
+    {
+      "name": "v1.0 Release-Bundle Manifest (self)",
+      "path": "artifacts/release-candidates/v1.0/MANIFEST.json",
+      "kind": "json",
+      "role": "manifest-of-manifests",
+      "sha256": "710e52df358468287b96be3ef126689fb24272af22d7a31a6640a40039fec3b0",
+      "description": "Self-referential top-level manifest enumerating every v1.0 release artifact with its SHA-256. The self-reference SHA-256 is the value of the file after the self-entry was added; a verifying consumer should recompute the hash on disk and accept that it equals this value if and only if the surrounding context matches."
+    },
+    {
+      "name": "v1.0 Quality-Gate Evidence",
+      "path": "artifacts/release-candidates/v1.0/QUALITY-GATE.md",
+      "kind": "markdown",
+      "role": "quality-gate",
+      "sha256": "ef7f0336184633d44dbc8d424b7c0549f8d34c00ff33e18292d5de9ce39ef416",
+      "description": "Consolidated evidence for all 11 quality gates (format, lint, typecheck, test:coverage, build, contracts:verify, architecture:check, docs:build, security:scan, licenses:report, sbom) plus the NFR matrix."
+    },
+    {
+      "name": "v1.0 Portfolio Asset Index",
+      "path": "artifacts/release-candidates/v1.0/PORTFOLIO.md",
+      "kind": "markdown",
+      "role": "portfolio",
+      "sha256": "33f724b471a8ae13cda2d9d4f490376f83a607c306bf72485bfbbc1d54135235",
+      "description": "Catalog of candidate visual, narrative, and reference assets: landing page, architecture diagrams, public docs, scoped local source reference, project root files, and this bundle."
+    },
+    {
+      "name": "v1.0 Manifest Verifier",
+      "path": "artifacts/release-candidates/v1.0/verify-manifest.mjs",
+      "kind": "javascript",
+      "role": "verifier",
+      "sha256": "65aedb582bf499cff5c586ab255e4abcc209127f7871039f48bfe0963afeade9",
+      "description": "Standalone Node.js script that recomputes every artifact's SHA-256 and compares it to the value recorded in this MANIFEST.json. Exits 0 if all 9 non-self references verify; the self-reference is tolerated with an explicit drift warning."
+    }
+  ],
+  "cross_references_note": "The release evidence includes compact, committed gate summaries. Raw CI logs, coverage HTML, SBOM output, and license reports under artifacts/reports/ are generated and intentionally not committed; reproduce them with the commands in docs/RELEASE-PROCESS.md.",
+  "cross_references": {
+    "authority_lock": "../authority-lock.json",
+    "rc1_release_bundle": "../rc1/",
+    "gate_E_contracts": "Generated CI evidence; reproduce locally with the release quality commands. Raw output is intentionally not committed.",
+    "gate_E_docs": "Generated CI evidence; reproduce locally with the release quality commands. Raw output is intentionally not committed.",
+    "gate_G_architecture": "Generated CI evidence; reproduce locally with the release quality commands. Raw output is intentionally not committed.",
+    "gate_H_security": "Generated CI evidence; reproduce locally with the release quality commands. Raw output is intentionally not committed.",
+    "gate_H_licenses": "Generated CI evidence; reproduce locally with the release quality commands. Raw output is intentionally not committed.",
+    "gate_H_sbom": "Generated CI evidence; reproduce locally with the release quality commands. Raw output is intentionally not committed.",
+    "gate_K_tests": "Generated CI evidence; reproduce locally with the release quality commands. Raw output is intentionally not committed.",
+    "production_license_report": "Generated CI evidence; reproduce locally with the release quality commands. Raw output is intentionally not committed.",
+    "production_sbom": "Generated CI evidence; reproduce locally with the release quality commands. Raw output is intentionally not committed."
+  },
+  "release_gates": {
+    "Gate E (architecture consistency — contracts:verify)": "PASS — 8/8 authorities",
+    "Gate G (implementation readiness — architecture:check)": "PASS — 5/5 invariants",
+    "Gate H (production hardening — security/licenses/sbom)": "PASS — 0 vulnerabilities, license inventory, CycloneDX SBOM",
+    "Gate K (release readiness — quality + 146/146 tests)": "PASS — 146/146, coverage 80/80/80/70"
+  },
+  "test_totals": {
+    "test_files": 21,
+    "tests_passing": 146,
+    "smoke_test_files": 1,
+    "smoke_operations_executed": 19,
+    "coverage_thresholds": {
+      "lines": 80,
+      "functions": 80,
+      "branches": 70,
+      "statements": 80
+    }
+  },
+  "nfr_matrix_results": {
+    "nfr_perf_throughput": {
+      "target": ">= 1000 ops/sec",
+      "observed": "3602–4009 ops/sec across three 5000-mutation runs",
+      "passed": true,
+      "historical_rc1_observed": "3850 ops/sec at 1000 mutations"
+    },
+    "nfr_rel2_rto": {
+      "target": "< 30000 ms",
+      "observed": "40 ms",
+      "passed": true
+    },
+    "nfr_ops1_deployment": {
+      "target": "isolated workspaces",
+      "observed": "2 distinct stores",
+      "passed": true
+    },
+    "nfr_use1_cold_start": {
+      "target": "< 5000 ms",
+      "observed": "88 ms",
+      "passed": true
+    },
+    "av_o6_secret_leak": {
+      "target": "no secret value",
+      "observed": "no leak",
+      "passed": true
+    }
+  }
+}

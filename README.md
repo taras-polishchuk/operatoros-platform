@@ -8,7 +8,7 @@
 
 OperatorOS Platform is an operator-controlled execution platform for named Missions. A Mission is durable intent; each Run is an execution with explicit state, optimistic concurrency, and recoverable checkpoints. The evidence ledger records what was acknowledged instead of allowing a projection to guess success.
 
-The Local profile is the default: canonical Workspace operations work without a network and evidence is persisted in SQLite WAL. The platform is a TypeScript monorepo with four authoritative implementation components and integration packages for agents, extensions, hosted deployments, secrets, recovery, migration, and distributed coordination. See `packages/execution-service/src/` and `packages/evidence-service/src/` for the core implementation.
+The Local profile is the default: canonical Workspace operations work without a network and evidence is persisted in SQLite WAL. The platform is a TypeScript monorepo with four authoritative implementation components plus integration packages for agents, extensions, secrets, recovery, and migration. Hosted runtime and distributed coordination are tested contract/primitives packages, not bundled production deployments. See `packages/execution-service/src/` and `packages/evidence-service/src/` for the core implementation.
 
 This checkout contains the v1.0 release-candidate implementation. M0..M4 are closed and release gates E, G, H, and K have repository evidence; publication and tagging remain separate operator-authorized steps. The architecture remains pinned at SHA-256 `1e79049d9ae5a328556378ff8235525cd0f692bfa317fd7da6dc2bcdb1f27610`.
 
@@ -23,10 +23,11 @@ The following is the smallest repository-backed smoke path; it runs the golden i
 ```sh
 corepack enable
 pnpm install --frozen-lockfile
+pnpm build
 pnpm test apps/smoke
 ```
 
-For the guided five-minute flow, see [Getting Started](docs/GETTING-STARTED.md). Library consumers can compose the factories exported from `packages/workspace-service/src/`, `packages/execution-service/src/`, and `packages/evidence-service/src/`.
+For the guided five-minute flow, see [Getting Started](docs/GETTING-STARTED.md). Source integrators can compose the factories exported from `packages/workspace-service/src/`, `packages/execution-service/src/`, and `packages/evidence-service/src/`. The workspace packages are private monorepo units in v1.0; no npm package or standalone SDK is published.
 
 ## Quick start
 
@@ -70,8 +71,8 @@ Read the [architecture guide](docs/ARCHITECTURE.md) and the frozen [architecture
 | `@operatoros-platform/v08-importer`             | Non-destructive v0.8 → v1.0 importer (READ-ONLY on v0.8).                                           |
 | `@operatoros-platform/agent-execution`          | Agent registration, capability matching, and invocation flow.                                       |
 | `@operatoros-platform/extension-runtime`        | Extension lifecycle, boundary checks, and uninstall.                                                |
-| `@operatoros-platform/hosted-runtime`           | Multi-tenant hosted runtime shape.                                                                  |
-| `@operatoros-platform/distributed-coordination` | Peer registry, checkpoint anchoring, and reconciliation.                                            |
+| `@operatoros-platform/hosted-runtime`           | In-memory multi-tenant contract shape; not a production hosted service.                             |
+| `@operatoros-platform/distributed-coordination` | Tested peer/reconciliation primitives; not a multi-host deployment.                                 |
 
 Concrete contracts and behavior live in each package's `src/`; operator guides are in package `README.md` files.
 
@@ -92,8 +93,8 @@ These are observed values from the release evidence, not universal capacity guar
 - **M0 Local Bedrock — closed**
 - **M1 Agent Execution — closed**
 - **M2 Extensibility — closed**
-- **M3 Operator-hosted — closed**
-- **M4 Distributed — closed**
+- **M3 Operator-hosted — implementation milestone closed; no hosted service is bundled**
+- **M4 Distributed — implementation milestone closed; no multi-host deployment is bundled**
 - **v1.1 backlog:** OS keyring, OpenTelemetry, stable SQLite binding, and other tracked technical-debt work.
 
 Public v1.0 publication and tagging remain pending.
@@ -102,8 +103,8 @@ Public v1.0 publication and tagging remain pending.
 
 - [Installation](docs/INSTALLATION.md) · [Getting Started](docs/GETTING-STARTED.md) · [Architecture](docs/ARCHITECTURE.md)
 - [Deployment](docs/DEPLOYMENT.md) · [FAQ](docs/FAQ.md) · [Release process](docs/RELEASE-PROCESS.md)
-- API reference: generate locally with `pnpm docs:build` · [Architecture authorities](docs/authorities/)
-- [Changelog](CHANGELOG.md) · [Final release report](artifacts/release-candidates/v1.0/final-report.md)
+- Local source API reference (five core entry points): generate with `pnpm docs:build` · [Architecture authorities](docs/authorities/)
+- [Changelog](CHANGELOG.md) · [Local release-candidate report](artifacts/release-candidates/v1.0/final-report.md)
 
 ## Contributing
 

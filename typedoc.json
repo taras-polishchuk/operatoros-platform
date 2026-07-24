@@ -11,11 +11,15 @@
   "excludeInternal": true,
   "excludeProtected": true,
   "excludeExternals": true,
+  "disableSources": true,
+  "treatWarningsAsErrors": true,
   "validation": {
     "notExported": false,
     "invalidLink": false,
+    "invalidPath": true,
+    "rewrittenLink": true,
     "notDocumented": false,
-    "strict": false
+    "unusedMergeModuleWith": true
   },
-  "readme": "README.md"
+  "readme": "none"
 }

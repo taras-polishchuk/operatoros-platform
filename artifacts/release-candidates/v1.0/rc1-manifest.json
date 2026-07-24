@@ -1,0 +1,117 @@
+{
+  "release_candidate": "v1.0",
+  "product": "OperatorOS Platform",
+  "version": "1.0.0",
+  "schema_version": "1.0.0",
+  "architecture_sha256": "1e79049d9ae5a328556378ff8235525cd0f692bfa317fd7da6dc2bcdb1f27610",
+  "authority_lock_present": true,
+  "produced_at": "2026-07-24",
+  "repository_url": "https://github.com/taras-polishchuk/operatoros-platform",
+  "homepage_url": "https://github.com/taras-polishchuk/operatoros-platform#readme",
+  "milestones_closed": ["M0", "M1", "M2", "M3", "M4", "apps/smoke (golden-path integration)"],
+  "release_gates": {
+    "Gate E (architecture consistency — contracts:verify)": "PASS",
+    "Gate G (implementation readiness — architecture:check)": "PASS",
+    "Gate H (production hardening — security/licenses/sbom)": "PASS",
+    "Gate K (release readiness — quality + 146/146 tests)": "PASS"
+  },
+  "test_totals": {
+    "test_files": 21,
+    "tests_passing": 146,
+    "smoke_test_files": 1,
+    "smoke_operations_executed": 19,
+    "coverage_thresholds": {
+      "lines": 80,
+      "functions": 80,
+      "branches": 70,
+      "statements": 80
+    }
+  },
+  "packages": [
+    "@operatoros-platform/contracts",
+    "@operatoros-platform/evidence-service",
+    "@operatoros-platform/execution-service",
+    "@operatoros-platform/workspace-service",
+    "@operatoros-platform/governance-service",
+    "@operatoros-platform/interface-host",
+    "@operatoros-platform/recovery-service",
+    "@operatoros-platform/secrets-service",
+    "@operatoros-platform/v08-importer",
+    "@operatoros-platform/agent-execution",
+    "@operatoros-platform/extension-runtime",
+    "@operatoros-platform/hosted-runtime",
+    "@operatoros-platform/distributed-coordination"
+  ],
+  "supported_operations_total": 50,
+  "quality_gates_passed": [
+    "format:check",
+    "lint",
+    "typecheck",
+    "test:coverage",
+    "build",
+    "contracts:verify",
+    "architecture:check",
+    "docs:build",
+    "security:scan",
+    "licenses:report",
+    "sbom"
+  ],
+  "evidence_artifacts": {
+    "authority_lock": "authority-lock.json",
+    "contracts_verify_report": "artifacts/reports/gates/gate-E-contracts.json",
+    "architecture_check_report": "artifacts/reports/gates/gate-G-architecture.json",
+    "security_scan_report": "artifacts/reports/gates/gate-H-security.json",
+    "license_report": "artifacts/reports/gates/gate-H-licenses.txt",
+    "sbom_summary": "artifacts/reports/gates/gate-H-sbom.txt",
+    "test_summary": "artifacts/reports/gates/gate-K-tests.txt",
+    "rc_manifest": "artifacts/release-candidates/v1.0/rc1-manifest.json",
+    "release_notes": "artifacts/release-candidates/v1.0/CHANGELOG.md",
+    "technical_debt": "artifacts/release-candidates/v1.0/technical-debt.md",
+    "v1_1_backlog": "artifacts/release-candidates/v1.0/v1.1-backlog.md",
+    "architecture_deltas": "artifacts/release-candidates/v1.0/architecture-deltas.md",
+    "migration_notes": "artifacts/release-candidates/v1.0/migration-from-v08.md",
+    "final_report": "artifacts/release-candidates/v1.0/final-report.md",
+    "manifest": "artifacts/release-candidates/v1.0/MANIFEST.json",
+    "portfolio": "artifacts/release-candidates/v1.0/PORTFOLIO.md",
+    "quality_gate": "artifacts/release-candidates/v1.0/QUALITY-GATE.md",
+    "typedoc_index": "docs/api/index.html",
+    "smoke_source": "apps/smoke/src/index.ts",
+    "smoke_test": "apps/smoke/src/__tests__/golden-path.test.ts"
+  },
+  "nfr_matrix_results": {
+    "nfr_perf_throughput": {
+      "target": ">= 1000 ops/sec",
+      "observed": "3602–4009 ops/sec across three 5000-mutation runs",
+      "historical_rc1_observed": "3850 ops/sec at 1000 mutations",
+      "passed": true
+    },
+    "nfr_rel2_rto": {
+      "target": "< 30000 ms",
+      "observed": "40 ms",
+      "passed": true
+    },
+    "nfr_ops1_deployment": {
+      "target": "isolated workspaces",
+      "observed": "2 distinct stores",
+      "passed": true
+    },
+    "nfr_use1_cold_start": {
+      "target": "< 5000 ms",
+      "observed": "88 ms",
+      "passed": true
+    },
+    "av_o6_secret_leak": {
+      "target": "no secret value",
+      "observed": "no leak",
+      "passed": true
+    }
+  },
+  "changes_from_rc1": [
+    "Package version bumped 1.0.0-rc1 → 1.0.0 (root + apps/smoke only; packages/* keep 0.0.0-development per pnpm workspace convention).",
+    "Public landing page (homepage/) added with architecture.svg, logo.svg, and dark-themed stylesheet.",
+    "Public documentation set: docs/GETTING-STARTED.md, INSTALLATION.md, DEPLOYMENT.md, FAQ.md, RELEASE-PROCESS.md, ARCHITECTURE.md.",
+    "Local source reference for five configured entry points generated to ignored docs/api/ via typedoc.",
+    "Root package.json description tightened for repository metadata; no npm package is published.",
+    "Repository URL standardized to https://github.com/taras-polishchuk/operatoros-platform."
+  ]
+}

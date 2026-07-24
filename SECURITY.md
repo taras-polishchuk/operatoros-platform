@@ -2,7 +2,7 @@
 
 ## Reporting vulnerabilities
 
-Report vulnerabilities privately using the repository's GitHub Security Advisory page: <https://github.com/taras-polishchuk/operatoros-platform/security/advisories/new>. If that route is unavailable, use the private contact placeholder in [SUPPORT.md](SUPPORT.md) and do not open a public issue containing exploit details or secret material.
+Report vulnerabilities privately using the repository's [private vulnerability-report form](https://github.com/taras-polishchuk/operatoros-platform/security/advisories/new). This is the supported confidential disclosure route. Do not open a public issue, discussion, or pull request containing exploit details, credentials, or secret material. If GitHub cannot open the form, wait and retry rather than moving the report to a public channel.
 
 ## Supported versions
 
