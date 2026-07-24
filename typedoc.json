@@ -9,5 +9,13 @@
   "out": "docs/api",
   "excludePrivate": true,
   "excludeInternal": true,
+  "excludeProtected": true,
+  "excludeExternals": true,
+  "validation": {
+    "notExported": false,
+    "invalidLink": false,
+    "notDocumented": false,
+    "strict": false
+  },
   "readme": "README.md"
 }

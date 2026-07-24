@@ -1,97 +1,126 @@
 # OperatorOS Platform
 
-Implementation of the frozen OperatorOS Platform architecture.
+[![Build](https://img.shields.io/badge/release%20candidate-local%20validation-informational)](docs/RELEASE-PROCESS.md) [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE) [![Coverage gates](https://img.shields.io/badge/coverage%20gates-80%2F80%2F80%2F70-informational)](artifacts/release-candidates/v1.0/QUALITY-GATE.md)
 
-Status: **v1.0.0-rc1** — RC1 release candidate. All four milestones (M0..M4) closed, all four release gates (E, G, H, K) PASS, 132 tests passing across 20 files.
+**Local-first Mission execution with an evidence ledger.**
 
-## Quick start
+## What is this?
+
+OperatorOS Platform is an operator-controlled execution platform for named Missions. A Mission is durable intent; each Run is an execution with explicit state, optimistic concurrency, and recoverable checkpoints. The evidence ledger records what was acknowledged instead of allowing a projection to guess success.
+
+The Local profile is the default: canonical Workspace operations work without a network and evidence is persisted in SQLite WAL. The platform is a TypeScript monorepo with four authoritative implementation components and integration packages for agents, extensions, hosted deployments, secrets, recovery, migration, and distributed coordination. See `packages/execution-service/src/` and `packages/evidence-service/src/` for the core implementation.
+
+This checkout contains the v1.0 release-candidate implementation. M0..M4 are closed and release gates E, G, H, and K have repository evidence; publication and tagging remain separate operator-authorized steps. The architecture remains pinned at SHA-256 `1e79049d9ae5a328556378ff8235525cd0f692bfa317fd7da6dc2bcdb1f27610`.
+
+## Why?
+
+Automation without trustworthy state leaves operators unable to answer: what ran, under whose authority, what changed, and whether recovery is safe. OperatorOS makes the operator the final authority: capabilities are explicitly granted, evidence is durable and sealed, unknown outcomes remain unresolved, and recovery uses fencing rather than hope. The promise is evidence over inference and a local canonical record even when the network is unavailable.
+
+## First Mission
+
+The following is the smallest repository-backed smoke path; it runs the golden integration wiring and prints a report:
 
 ```sh
 corepack enable
 pnpm install --frozen-lockfile
-pnpm quality
+pnpm test apps/smoke
 ```
 
-`pnpm quality` runs:
+For the guided five-minute flow, see [Getting Started](docs/GETTING-STARTED.md). Library consumers can compose the factories exported from `packages/workspace-service/src/`, `packages/execution-service/src/`, and `packages/evidence-service/src/`.
 
-- format:check (prettier)
-- lint (eslint, --max-warnings 0)
-- typecheck (tsc root + every package)
-- test:coverage (vitest, 80/80/80/70 thresholds)
-- build (turbo, every package)
-- contracts:verify (8/8 frozen authorities)
-- architecture:check (5/5 invariants)
+## Quick start
 
-Supplementary tooling:
+Requirements: Node.js 22+, pnpm 9, and 2 GB RAM.
 
-- `pnpm docs:build` — typedoc API surface.
-- `pnpm security:scan` — pnpm audit + source-pattern scan.
-- `pnpm licenses:report` — production-dependency-licenses.json.
-- `pnpm sbom` — CycloneDX-shaped SBOM.
-- `pnpm spike:persistence` — SQLite WAL vs file journal.
-- `pnpm test apps/smoke` — golden-path integration smoke.
+```sh
+git clone https://github.com/taras-polishchuk/operatoros-platform.git
+cd operatoros-platform
+corepack enable
+pnpm install --frozen-lockfile
+pnpm quality
+pnpm test apps/smoke
+```
 
-## What this is
+The smoke run initializes an isolated Workspace, records a Mission, exercises capability and extension paths, and verifies evidence. Installation and troubleshooting details are in [Installation](docs/INSTALLATION.md).
 
-OperatorOS Platform is the canonical successor to OperatorOS v0.8.x, implemented as a separate monorepo at `/home/taras/projects/operatoros-platform/`. The v0.8 repo at `/home/taras/projects/operatoros/` remains **read-only** — a compatibility authority referenced by the v08-importer package.
+## Architecture
 
-The platform is structured around four authoritative surfaces — `contracts`, `evidence-service`, `workspace-service`, `execution-service` — surrounded by nine integration packages: `governance-service`, `interface-host`, `recovery-service`, `secrets-service`, `v08-importer`, `agent-execution`, `extension-runtime`, `hosted-runtime`, `distributed-coordination`.
+Four replaceable components implement one shared Domain contract:
 
-The Local profile requires no network for authoritative Workspace operations and uses SQLite WAL for evidence persistence.
+```text
+Interface Host ──┬──> Workspace Service ──┐
+                 └──> Execution Service ──┼──> Evidence Service
+                                          └──> Workspace commands
+```
+
+Read the [architecture guide](docs/ARCHITECTURE.md) and the frozen [architecture authority](docs/authorities/architecture.md). The authority lock is `authority-lock.json`; do not change either it or the pinned SHA without the formal successor-ADR process.
 
 ## Packages
 
-| Package                                         | Purpose                                                                                         |
-| ----------------------------------------------- | ----------------------------------------------------------------------------------------------- |
-| `@operatoros-platform/contracts`                | Public contract vocabulary (14 entities + 5 envelopes + 1 extension manifest).                  |
-| `@operatoros-platform/evidence-service`         | Authoritative evidence ledger with mission records, mutation envelopes, integrity verification. |
-| `@operatoros-platform/workspace-service`        | Workspace aggregate, Artifact aggregate, snapshot export/import.                                |
-| `@operatoros-platform/execution-service`        | Mission Record + Run state machine (8 RUN_STATES) with optimistic concurrency.                  |
-| `@operatoros-platform/governance-service`       | Operator Profile, Capability Grant, Configuration Revision, Effective Configuration projection. |
-| `@operatoros-platform/interface-host`           | Local CLI dispatcher (in-process).                                                              |
-| `@operatoros-platform/recovery-service`         | Recovery lease w/ fencing tokens, atomic checkpoint, dual-contender resolution.                 |
-| `@operatoros-platform/secrets-service`          | Secret Reference + Security Baseline; preview-only secret material.                             |
-| `@operatoros-platform/v08-importer`             | Non-destructive v0.8 -> v1.0 importer (READ-ONLY on v0.8).                                      |
-| `@operatoros-platform/agent-execution`          | Agent registration + capability matching + invocation flow.                                     |
-| `@operatoros-platform/extension-runtime`        | Extension lifecycle + boundary check + uninstall.                                               |
-| `@operatoros-platform/hosted-runtime`           | Multi-tenant hosted CLI shape.                                                                  |
-| `@operatoros-platform/distributed-coordination` | Peer registry + checkpoint anchoring + reconcile.                                               |
-| `@operatoros-platform/smoke`                    | Golden-path integration smoke wiring all 13 packages.                                           |
+| Package                                         | Purpose                                                                                             |
+| ----------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| `@operatoros-platform/contracts`                | Public contract vocabulary (14 entities + 5 envelopes + 1 extension manifest).                      |
+| `@operatoros-platform/evidence-service`         | Authoritative evidence ledger with Mission Records, mutation envelopes, and integrity verification. |
+| `@operatoros-platform/workspace-service`        | Workspace and Artifact aggregates, snapshot export/import.                                          |
+| `@operatoros-platform/execution-service`        | Mission Record + Run state machine (8 `RUN_STATES`) with optimistic concurrency.                    |
+| `@operatoros-platform/governance-service`       | Operator Profile, Capability Grant, Configuration Revision, Effective Configuration projection.     |
+| `@operatoros-platform/interface-host`           | Shared local interface dispatcher and surface boundary.                                             |
+| `@operatoros-platform/recovery-service`         | Recovery leases with fencing tokens, atomic checkpoints, and dual-contender resolution.             |
+| `@operatoros-platform/secrets-service`          | Secret References and security baseline; preview-only secret material.                              |
+| `@operatoros-platform/v08-importer`             | Non-destructive v0.8 → v1.0 importer (READ-ONLY on v0.8).                                           |
+| `@operatoros-platform/agent-execution`          | Agent registration, capability matching, and invocation flow.                                       |
+| `@operatoros-platform/extension-runtime`        | Extension lifecycle, boundary checks, and uninstall.                                                |
+| `@operatoros-platform/hosted-runtime`           | Multi-tenant hosted runtime shape.                                                                  |
+| `@operatoros-platform/distributed-coordination` | Peer registry, checkpoint anchoring, and reconciliation.                                            |
 
-## NFR matrix (RC1 evidence)
+Concrete contracts and behavior live in each package's `src/`; operator guides are in package `README.md` files.
 
-| NFR                            | Target              | Observed          |
-| ------------------------------ | ------------------- | ----------------- |
-| NFR-PERF throughput            | >= 1000 ops/sec     | 3850 ops/sec      |
-| NFR-REL-2 RTO                  | < 30000 ms          | 40 ms             |
-| NFR-OPS-1 local deployment     | isolated workspaces | 2 distinct stores |
-| NFR-USE-1 cold start           | < 5000 ms           | 88 ms             |
-| AV-O6 secret value never leaks | none                | none              |
+## NFR matrix (observed release evidence)
 
-## Architecture SHA-256 pin
+| NFR                            | Target              | Observed                                          |
+| ------------------------------ | ------------------- | ------------------------------------------------- |
+| NFR-PERF throughput            | >= 1000 ops/sec     | 3602–4009 ops/sec across three 5000-mutation runs |
+| NFR-REL-2 RTO                  | < 30000 ms          | 40 ms                                             |
+| NFR-OPS-1 local deployment     | isolated workspaces | 2 distinct stores                                 |
+| NFR-USE-1 cold start           | < 5000 ms           | 88 ms                                             |
+| AV-O6 secret value never leaks | none                | none                                              |
 
-`1e79049d9ae5a328556378ff8235525cd0f692bfa317fd7da6dc2bcdb1f27610` must remain unchanged through IP-V4. Verified on every CI run.
+These are observed values from the release evidence, not universal capacity guarantees. Source: [`artifacts/release-candidates/v1.0/QUALITY-GATE.md`](artifacts/release-candidates/v1.0/QUALITY-GATE.md). The values are single-release observations on the recorded test host, not capacity or latency guarantees.
 
-## Authority
+## Roadmap
 
-- Frozen documents: `docs/authorities/`
-- Machine lock: `authority-lock.json`
-- Implementation roadmap: `docs/authorities/implementation-roadmap.md`
+- **M0 Local Bedrock — closed**
+- **M1 Agent Execution — closed**
+- **M2 Extensibility — closed**
+- **M3 Operator-hosted — closed**
+- **M4 Distributed — closed**
+- **v1.1 backlog:** OS keyring, OpenTelemetry, stable SQLite binding, and other tracked technical-debt work.
 
-## Release candidate
-
-RC1 artifacts at `artifacts/release-candidates/rc1/`:
-
-- `rc1-manifest.json` — gates E/G/H/K pinned PASS.
-- `CHANGELOG.md` — release notes.
-- `final-report.md` — delivery summary.
-- `technical-debt.md` — six items tracked.
-- `v1.1-backlog.md` — backlog for the next minor.
-- `migration-from-v08.md` — operator-facing migration.
-- `architecture-deltas.md` — six intentional deviations from the frozen architecture.
+Public v1.0 publication and tagging remain pending.
 
 ## Documentation
 
-- API reference (generated): `docs/api/index.html` — build with `pnpm docs:build`.
-- ADRs: `docs/adr/`.
-- Mission State: `/home/taras/projects/.project-state/operatoros-platform-m0-m4-implementation-2026-07-19/`.
+- [Installation](docs/INSTALLATION.md) · [Getting Started](docs/GETTING-STARTED.md) · [Architecture](docs/ARCHITECTURE.md)
+- [Deployment](docs/DEPLOYMENT.md) · [FAQ](docs/FAQ.md) · [Release process](docs/RELEASE-PROCESS.md)
+- API reference: generate locally with `pnpm docs:build` · [Architecture authorities](docs/authorities/)
+- [Changelog](CHANGELOG.md) · [Final release report](artifacts/release-candidates/v1.0/final-report.md)
+
+## Contributing
+
+Read [CONTRIBUTING.md](CONTRIBUTING.md) before opening a pull request.
+
+## Security
+
+See [SECURITY.md](SECURITY.md) for defaults, threat model, and private disclosure instructions.
+
+## License
+
+MIT. See [LICENSE](LICENSE).
+
+## Support
+
+Ask questions and share deployments in [SUPPORT.md](SUPPORT.md). GitHub Discussions are not part of the currently configured public support surface.
+
+---
+
+[OperatorOS Platform on GitHub](https://github.com/taras-polishchuk/operatoros-platform)

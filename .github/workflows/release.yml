@@ -1,0 +1,112 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Tag to validate (manual dispatch is validation-only)
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Validate release
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.9
+          run_install: false
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+
+      - name: Verify lockfile is reproducible
+        run: pnpm install --frozen-lockfile
+
+      - name: Verify release tag is checked out
+        run: |
+          expected="${{ inputs.tag || github.ref_name }}"
+          test "$expected" = "${GITHUB_REF_NAME}"
+          git describe --exact-match --tags HEAD
+
+      - name: Run quality gate
+        run: pnpm quality
+
+      - name: Build API documentation
+        run: pnpm docs:build
+
+      - name: Verify manifest
+        run: node artifacts/release-candidates/v1.0/verify-manifest.mjs
+
+      - name: Verify authorities
+        run: pnpm contracts:verify
+
+      - name: Upload release artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-bundle
+          path: |
+            artifacts/release-candidates/v1.0/
+            LICENSE
+            README.md
+            CHANGELOG.md
+            SECURITY.md
+            SUPPORT.md
+          if-no-files-found: error
+
+  publish:
+    name: Publish GitHub Release (operator-authorized)
+    needs: validate
+    if: ${{ github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v') }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Download release artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: release-bundle
+          path: dist-release
+
+      - name: Read changelog
+        id: changelog
+        run: |
+          if [ -f dist-release/CHANGELOG.md ]; then
+            echo "changelog_path=dist-release/CHANGELOG.md" >> "$GITHUB_OUTPUT"
+          else
+            echo "changelog_path=" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: OperatorOS Platform ${{ github.ref_name }}
+          body_path: ${{ steps.changelog.outputs.changelog_path }}
+          draft: false
+          prerelease: ${{ contains(github.ref_name, 'rc') || contains(github.ref_name, 'alpha') || contains(github.ref_name, 'beta') }}
+          files: |
+            dist-release/artifacts/release-candidates/v1.0/*
+            dist-release/LICENSE
+            dist-release/README.md
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
