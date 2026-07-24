@@ -544,6 +544,7 @@ export function createSqliteWorkspaceStore(options: { databasePath: string }) {
           .get(input.workspace_ref, a.artifact_id);
         if (exists !== undefined) continue;
         const restoredContentPath = artifactContentPath(input.root_path, a.artifact_id);
+        await mkdir(dirname(restoredContentPath), { recursive: true });
         await writeFile(restoredContentPath, content);
         const entity = { ...a.entity, content_ref: restoredContentPath };
         database

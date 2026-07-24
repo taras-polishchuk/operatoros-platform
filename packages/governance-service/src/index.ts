@@ -522,11 +522,16 @@ export function createSqliteGovernanceStore(options: { databasePath: string }) {
     for (let index = 1; index < rows.length; index += 1) {
       const previousRow = rows[index - 1];
       const currentRow = rows[index];
-      if (previousRow?.scope === currentRow?.scope && previousRow?.precedence === currentRow?.precedence) {
-        return {
-          outcome: 'rejected',
-          reason: `EQUAL_PRECEDENCE_CONFLICT:${String(currentRow?.scope)}:${String(currentRow?.precedence)}`,
-        };
+      if (previousRow && currentRow) {
+        if (
+          previousRow.scope === currentRow.scope &&
+          previousRow.precedence === currentRow.precedence
+        ) {
+          return {
+            outcome: 'rejected',
+            reason: `EQUAL_PRECEDENCE_CONFLICT:${String(currentRow.scope)}:${String(currentRow.precedence)}`,
+          };
+        }
       }
     }
     const precedence = [...rows]

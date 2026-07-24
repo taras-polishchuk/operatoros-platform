@@ -36,7 +36,7 @@ async function main() {
   // This mirrors how a real workload batches mutations (a single root command
   // commits its full event set atomically).
   const t0 = performance.now();
-  const N = 1000;
+  const N = 5000;
   evidence.openBatch();
   for (let i = 0; i < N; i += 1) {
     evidence.commitMutation({
