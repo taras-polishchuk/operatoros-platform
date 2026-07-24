@@ -44,7 +44,7 @@ describe('IP-012 NFR closure matrix', () => {
     // NFR-PERF-1..3 (batched)
     const evidence = createSqliteEvidenceService({ databasePath: join(root, 'evidence.sqlite') });
     const t0 = performance.now();
-    const N = 1000;
+    const N = 5000;
     evidence.openBatch();
     for (let i = 0; i < N; i += 1) {
       evidence.commitMutation({
@@ -233,5 +233,5 @@ describe('IP-012 NFR closure matrix', () => {
         `${r.name}: observed ${String(r.observed)} ${r.unit} (target ${r.target})`,
       ).toBe(true);
     }
-  });
+  }, 30_000);
 });

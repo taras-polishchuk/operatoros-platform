@@ -207,12 +207,15 @@ describe('IP-005 Workspace Service', () => {
       subject_identity_ref: 'identity://operator/taras',
     });
     for (const i of [0, 1, 2]) {
+      const contentPath = `${sourceCtx.root}/art_${String(i)}`;
+      const content = Buffer.from(`"${String(i)}"`);
+      await writeFile(contentPath, content);
       sourceCtx.service.createArtifact({
         workspace_ref: sharedWorkspaceRef,
         artifact_id: `art_${String(i)}`,
         artifact_kind: 'specification',
-        content_ref: `${sourceCtx.root}/art_${String(i)}`,
-        content: Buffer.from(`"${String(i)}"`),
+        content_ref: contentPath,
+        content,
         subject_identity_ref: 'identity://operator/taras',
       });
     }
@@ -239,6 +242,69 @@ describe('IP-005 Workspace Service', () => {
       source_path: snapshotPath,
     });
     expect(imported).toMatchObject({ outcome: 'snapshot_imported', entities_imported: 3 });
+    for (const i of [0, 1, 2]) {
+      const restored = targetCtx.service.getArtifact({
+        workspace_ref: sharedWorkspaceRef,
+        artifact_id: `art_${String(i)}`,
+      });
+      expect(restored).not.toBeNull();
+      if (!restored) throw new Error('expected restored artifact');
+      expect(await readFile(restored.content_ref, 'utf8')).toBe(`"${String(i)}"`);
+    }
+    await targetCtx.cleanup();
+  });
+
+  it('refuses a snapshot when its artifact content digest is tampered', async () => {
+    const sourceCtx = await makeWorkspace();
+    sourceCtx.service.initializeWorkspace({
+      workspace_ref: sourceCtx.workspaceId,
+      root_path: sourceCtx.root,
+      subject_identity_ref: 'identity://operator/taras',
+    });
+    const contentPath = join(sourceCtx.root, 'tamper-source.json');
+    const content = Buffer.from('{"safe":true}');
+    await writeFile(contentPath, content);
+    sourceCtx.service.createArtifact({
+      workspace_ref: sourceCtx.workspaceId,
+      artifact_id: 'artifact_tamper',
+      artifact_kind: 'specification',
+      content_ref: contentPath,
+      content,
+      subject_identity_ref: 'identity://operator/taras',
+    });
+    const snapshotPath = join(sourceCtx.root, 'snapshot-tampered-digest.json');
+    await sourceCtx.service.exportSnapshot({
+      workspace_ref: sourceCtx.workspaceId,
+      target_path: snapshotPath,
+    });
+    const snapshot = JSON.parse(await readFile(snapshotPath, 'utf8')) as {
+      artifacts: { content_digest: string }[];
+    };
+    if (!snapshot.artifacts[0]) throw new Error('expected snapshot artifact');
+    snapshot.artifacts[0].content_digest = '0'.repeat(64);
+    await writeFile(snapshotPath, `${JSON.stringify(snapshot, null, 2)}\n`);
+
+    const targetCtx = await makeWorkspace();
+    targetCtx.service.initializeWorkspace({
+      workspace_ref: sourceCtx.workspaceId,
+      root_path: targetCtx.root,
+      subject_identity_ref: 'identity://operator/taras',
+    });
+    await expect(
+      targetCtx.service.importSnapshot({
+        workspace_ref: sourceCtx.workspaceId,
+        root_path: targetCtx.root,
+        source_path: snapshotPath,
+      }),
+    ).rejects.toThrow(/SNAPSHOT_CONTENT_DIGEST_MISMATCH/u);
+    expect(
+      targetCtx.service.getArtifact({
+        workspace_ref: sourceCtx.workspaceId,
+        artifact_id: 'artifact_tamper',
+      }),
+    ).toBeNull();
+    await expect(readFile(join(targetCtx.root, 'artifacts', 'artifact_tamper'))).rejects.toThrow();
+    await sourceCtx.cleanup();
     await targetCtx.cleanup();
   });
 

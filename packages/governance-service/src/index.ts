@@ -88,6 +88,13 @@ function digest(value: unknown): string {
 
 const SCHEMA_VERSION = publicContractVersion;
 
+const CONFIG_SCOPE_RANK: Record<ConfigurationRevisionRecord['scope'], number> = {
+  'deployment-profile': 0,
+  workspace: 1,
+  mission: 2,
+  run: 3,
+};
+
 export function createSqliteGovernanceStore(options: { databasePath: string }) {
   const database = new DatabaseSync(options.databasePath);
   database.exec(`
@@ -205,18 +212,30 @@ export function createSqliteGovernanceStore(options: { databasePath: string }) {
       database.exec('ROLLBACK');
       throw error;
     }
+    const updated = database
+      .prepare(
+        'SELECT identity_ref, workspace_ref, entity_schema_version, superseded_by FROM operator_profiles WHERE entity_id = ?',
+      )
+      .get(input.entity_id) as
+      | {
+          identity_ref: string;
+          workspace_ref: string;
+          entity_schema_version: string;
+          superseded_by: string | null;
+        }
+      | undefined;
     return {
       outcome: 'committed',
       record_version: input.expected_version + 1,
       record: {
         entity_id: input.entity_id,
-        identity_ref: '',
+        identity_ref: updated?.identity_ref ?? '',
         state: 'suspended',
-        workspace_ref: '',
+        workspace_ref: updated?.workspace_ref ?? '',
         record_version: input.expected_version + 1,
         updated_at: now,
-        entity_schema_version: SCHEMA_VERSION,
-        superseded_by: null,
+        entity_schema_version: updated?.entity_schema_version ?? SCHEMA_VERSION,
+        superseded_by: updated?.superseded_by ?? null,
       },
     };
   }
@@ -314,20 +333,35 @@ export function createSqliteGovernanceStore(options: { databasePath: string }) {
       database.exec('ROLLBACK');
       throw error;
     }
+    const updated = database
+      .prepare(
+        'SELECT entity_id, subject_ref, capability_definition_ref, scope, granted_at, expires_at, workspace_ref FROM capability_grants WHERE grant_id = ?',
+      )
+      .get(input.grant_id) as
+      | {
+          entity_id: string;
+          subject_ref: string;
+          capability_definition_ref: string;
+          scope: string;
+          granted_at: string;
+          expires_at: string | null;
+          workspace_ref: string;
+        }
+      | undefined;
     return {
       outcome: 'committed',
       record_version: input.expected_version + 1,
       record: {
         grant_id: input.grant_id,
-        entity_id: '',
-        subject_ref: '',
-        capability_definition_ref: '',
-        scope: '',
+        entity_id: updated?.entity_id ?? '',
+        subject_ref: updated?.subject_ref ?? '',
+        capability_definition_ref: updated?.capability_definition_ref ?? '',
+        scope: updated?.scope ?? '',
         state: 'revoked',
-        granted_at: '',
-        expires_at: null,
+        granted_at: updated?.granted_at ?? '',
+        expires_at: updated?.expires_at ?? null,
         revoker_ref: input.revoker_ref,
-        workspace_ref: '',
+        workspace_ref: updated?.workspace_ref ?? '',
         record_version: input.expected_version + 1,
         updated_at: now,
       },
@@ -426,21 +460,39 @@ export function createSqliteGovernanceStore(options: { databasePath: string }) {
       database.exec('ROLLBACK');
       throw error;
     }
+    const updated = database
+      .prepare(
+        'SELECT entity_id, scope, precedence, payload, digest, workspace_ref, superseded_by FROM configuration_revisions WHERE config_ref = ?',
+      )
+      .get(input.config_ref) as
+      | {
+          entity_id: string;
+          scope: ConfigurationRevisionRecord['scope'];
+          precedence: number;
+          payload: string;
+          digest: string;
+          workspace_ref: string;
+          superseded_by: string | null;
+        }
+      | undefined;
+    const parsedPayload = updated?.payload
+      ? (JSON.parse(updated.payload) as Record<string, unknown>)
+      : {};
     return {
       outcome: 'committed',
       record_version: input.expected_version + 1,
       record: {
         config_ref: input.config_ref,
-        entity_id: '',
-        scope: 'workspace',
-        precedence: 0,
-        payload: {},
-        digest: '',
+        entity_id: updated?.entity_id ?? '',
+        scope: updated?.scope ?? 'workspace',
+        precedence: updated?.precedence ?? 0,
+        payload: parsedPayload,
+        digest: updated?.digest ?? '',
         state: 'retired',
-        workspace_ref: '',
+        workspace_ref: updated?.workspace_ref ?? '',
         record_version: input.expected_version + 1,
         updated_at: now,
-        superseded_by: null,
+        superseded_by: updated?.superseded_by ?? null,
       },
     };
   }
@@ -449,26 +501,41 @@ export function createSqliteGovernanceStore(options: { databasePath: string }) {
     workspace_ref: string;
     approver_refs: string[];
   }): GovernanceResult {
-    const rows = database
-      .prepare(
-        `SELECT config_ref, scope, precedence, payload, digest FROM configuration_revisions WHERE workspace_ref = ? AND state = 'active' ORDER BY scope, precedence DESC`,
-      )
-      .all(input.workspace_ref) as {
-      config_ref: string;
-      scope: ConfigurationRevisionRecord['scope'];
-      precedence: number;
-      payload: string;
-      digest: string;
-    }[];
-    const precedence = rows.map((row) => ({
-      config_ref: row.config_ref,
-      precedence: row.precedence,
-      scope: row.scope,
-    }));
+    const rows = (
+      database
+        .prepare(
+          `SELECT config_ref, scope, precedence, payload, digest FROM configuration_revisions WHERE workspace_ref = ? AND state = 'active'`,
+        )
+        .all(input.workspace_ref) as {
+        config_ref: string;
+        scope: ConfigurationRevisionRecord['scope'];
+        precedence: number;
+        payload: string;
+        digest: string;
+      }[]
+    ).sort(
+      (left, right) =>
+        CONFIG_SCOPE_RANK[left.scope] - CONFIG_SCOPE_RANK[right.scope] ||
+        left.precedence - right.precedence ||
+        left.config_ref.localeCompare(right.config_ref),
+    );
+    for (let index = 1; index < rows.length; index += 1) {
+      const previousRow = rows[index - 1];
+      const currentRow = rows[index];
+      if (previousRow?.scope === currentRow?.scope && previousRow?.precedence === currentRow?.precedence) {
+        return {
+          outcome: 'rejected',
+          reason: `EQUAL_PRECEDENCE_CONFLICT:${String(currentRow?.scope)}:${String(currentRow?.precedence)}`,
+        };
+      }
+    }
+    const precedence = [...rows]
+      .reverse()
+      .map((row) => ({ config_ref: row.config_ref, precedence: row.precedence, scope: row.scope }));
     let merged: Record<string, unknown> = {};
     for (const row of rows) {
       const parsed = JSON.parse(row.payload) as Record<string, unknown>;
-      merged = { ...parsed, ...merged };
+      merged = { ...merged, ...parsed };
     }
     const dig = digest({ merged, precedence, workspace_ref: input.workspace_ref });
     return {
@@ -484,10 +551,24 @@ export function createSqliteGovernanceStore(options: { databasePath: string }) {
     };
   }
 
-  function listActiveGrantsFor(input: { subject_ref: string }): CapabilityGrantRecord[] {
-    const rows = database
-      .prepare(`SELECT * FROM capability_grants WHERE subject_ref = ? AND state = 'active'`)
-      .all(input.subject_ref) as unknown as {
+  function listActiveGrantsFor(input: {
+    subject_ref: string;
+    // If true, grants whose `expires_at` is strictly in the past are filtered out.
+    // Active grants whose `expires_at` is null are never expired.
+    // Defaults to true so callers never see time-expired grants by accident.
+    exclude_expired?: boolean;
+  }): CapabilityGrantRecord[] {
+    const nowIso = new Date().toISOString();
+    const excludeExpired = input.exclude_expired ?? true;
+    const sql = excludeExpired
+      ? `SELECT * FROM capability_grants
+           WHERE subject_ref = ?
+             AND state = 'active'
+             AND (expires_at IS NULL OR expires_at > ?)`
+      : `SELECT * FROM capability_grants WHERE subject_ref = ? AND state = 'active'`;
+    const rows = (excludeExpired
+      ? database.prepare(sql).all(input.subject_ref, nowIso)
+      : database.prepare(sql).all(input.subject_ref)) as unknown as {
       grant_id: string;
       entity_id: string;
       subject_ref: string;

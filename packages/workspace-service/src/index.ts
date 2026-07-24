@@ -457,6 +457,21 @@ export function createSqliteWorkspaceStore(options: { databasePath: string }) {
     const workspaceRow = database
       .prepare('SELECT * FROM workspaces WHERE workspace_ref = ?')
       .get(input.workspace_ref);
+    const snapshotArtifacts = await Promise.all(
+      artifacts.map(async (artifact) => {
+        const content = await readFile(artifact.content_ref);
+        return {
+          artifact_id: artifact.artifact_id,
+          record_version: artifact.record_version,
+          artifact_kind: artifact.artifact_kind,
+          content_digest: artifact.content_digest,
+          content_sha256: createHash('sha256').update(content).digest('hex'),
+          content_base64: content.toString('base64'),
+          state: artifact.state,
+          entity: artifact.entity,
+        };
+      }),
+    );
     await mkdir(dirname(input.target_path), { recursive: true });
     await writeFile(
       input.target_path,
@@ -466,14 +481,7 @@ export function createSqliteWorkspaceStore(options: { databasePath: string }) {
           snapshot_at: new Date().toISOString(),
           workspace_ref: input.workspace_ref,
           workspace: workspaceRow,
-          artifacts: artifacts.map((a) => ({
-            artifact_id: a.artifact_id,
-            record_version: a.record_version,
-            artifact_kind: a.artifact_kind,
-            content_digest: a.content_digest,
-            state: a.state,
-            entity: a.entity,
-          })),
+          artifacts: snapshotArtifacts,
         },
         null,
         2,
@@ -495,47 +503,70 @@ export function createSqliteWorkspaceStore(options: { databasePath: string }) {
   }): Promise<WorkspaceResult> {
     const raw = await readFile(input.source_path, 'utf8');
     const snapshot = JSON.parse(raw) as {
+      schema_version: string;
       workspace_ref: string;
       artifacts: {
         artifact_id: string;
         artifact_kind: string;
         content_digest: string;
+        content_sha256: string;
+        content_base64: string;
         state: ArtifactRecord['state'];
         entity: Record<string, unknown>;
       }[];
     };
+    if (snapshot.schema_version !== publicContractVersion) {
+      throw new Error(`SNAPSHOT_SCHEMA_VERSION_UNSUPPORTED:${snapshot.schema_version}`);
+    }
     if (snapshot.workspace_ref !== input.workspace_ref) {
       throw new Error(
         `WORKSPACE_REF_MISMATCH: source=${snapshot.workspace_ref} target=${input.workspace_ref}`,
       );
     }
     let imported = 0;
-    for (const a of snapshot.artifacts) {
-      const exists = database
-        .prepare(
-          'SELECT artifact_id FROM artifact_records WHERE workspace_ref = ? AND artifact_id = ?',
-        )
-        .get(input.workspace_ref, a.artifact_id);
-      if (exists !== undefined) continue;
-      database
-        .prepare(`INSERT INTO artifact_records VALUES (?, ?, 1, ?, ?, ?, ?, NULL, ?, ?, ?, ?)`)
-        .run(
-          input.workspace_ref,
-          a.artifact_id,
-          a.artifact_kind,
-          typeof a.entity.content_ref === 'string'
-            ? a.entity.content_ref
-            : `${input.root_path}/${a.artifact_id}`,
-          a.content_digest,
-          a.state,
-          (a.entity.supersedes ?? null) as string | null,
-          new Date().toISOString(),
-          new Date().toISOString(),
-          JSON.stringify(a.entity),
-        );
-      imported += 1;
-    }
     await mkdir(resolve(input.root_path), { recursive: true });
+    database.exec('BEGIN IMMEDIATE');
+    try {
+      for (const a of snapshot.artifacts) {
+        const content = Buffer.from(a.content_base64, 'base64');
+        const contentSha256 = createHash('sha256').update(content).digest('hex');
+        if (contentSha256 !== a.content_sha256) {
+          throw new Error(`SNAPSHOT_CONTENT_INTEGRITY_FAILED:${a.artifact_id}`);
+        }
+        const canonicalContentDigest = digest(content);
+        if (canonicalContentDigest !== a.content_digest) {
+          throw new Error(`SNAPSHOT_CONTENT_DIGEST_MISMATCH:${a.artifact_id}`);
+        }
+        const exists = database
+          .prepare(
+            'SELECT artifact_id FROM artifact_records WHERE workspace_ref = ? AND artifact_id = ?',
+          )
+          .get(input.workspace_ref, a.artifact_id);
+        if (exists !== undefined) continue;
+        const restoredContentPath = artifactContentPath(input.root_path, a.artifact_id);
+        await writeFile(restoredContentPath, content);
+        const entity = { ...a.entity, content_ref: restoredContentPath };
+        database
+          .prepare(`INSERT INTO artifact_records VALUES (?, ?, 1, ?, ?, ?, ?, NULL, ?, ?, ?, ?)`)
+          .run(
+            input.workspace_ref,
+            a.artifact_id,
+            a.artifact_kind,
+            restoredContentPath,
+            a.content_digest,
+            a.state,
+            (a.entity.supersedes ?? null) as string | null,
+            new Date().toISOString(),
+            new Date().toISOString(),
+            JSON.stringify(entity),
+          );
+        imported += 1;
+      }
+      database.exec('COMMIT');
+    } catch (error) {
+      database.exec('ROLLBACK');
+      throw error;
+    }
     return {
       outcome: 'snapshot_imported',
       workspace_ref: input.workspace_ref,
