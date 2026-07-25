@@ -1,6 +1,6 @@
 {
   "name": "@operatoros-platform/governance-service",
-  "version": "0.0.0-development",
+  "version": "1.0.0",
   "description": "OperatorOS Platform — Operator Profile, Capability Grant, Configuration Revision, Effective Configuration projection",
   "type": "module",
   "private": true,
@@ -21,5 +21,6 @@
   },
   "dependencies": {
     "@operatoros-platform/contracts": "workspace:*"
-  }
+  },
+  "license": "MIT"
 }

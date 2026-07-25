@@ -1,0 +1,37 @@
+---
+name: Feature Request
+about: Suggest an idea for this project
+title: '[FEATURE] '
+labels: enhancement
+assignees: []
+---
+
+## Problem Statement
+
+A clear and concise description of what the problem is. What pain point does this
+address for operators, agents, or integrators? Ex. I am always frustrated when
+[...].
+
+## Proposed Solution
+
+A clear and concise description of what you want to happen. Describe the
+intended UX, the APIs/operations affected, and the expected behavior. Reference
+relevant packages (`@operatoros-platform/interface-host`,
+`@operatoros-platform/evidence-service`, `@operatoros-platform/contracts`, etc.)
+and authority documents (`docs/authorities/architecture.md`, ADRs).
+
+## Alternatives Considered
+
+What other approaches did you consider, and why is this one preferable? Include
+any trade-offs in capability surface area, evidence immutability, recovery
+semantics, or authority boundaries.
+
+## Use Case
+
+Describe the concrete workflow this enables. Who is the operator? What is the
+mission shape? How does it integrate with the existing Mission Record and
+evidence ledger?
+
+## Additional Context
+
+Add any other context, screenshots, examples, mock-ups, or links here.

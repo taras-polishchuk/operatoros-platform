@@ -1,0 +1,8 @@
+* text=auto eol=lf
+*.png binary
+*.jpg binary
+*.svg binary
+docs/api/* linguist-documentation
+CHANGELOG.md linguist-documentation
+LICENSE linguist-documentation
+*.md linguist-documentation

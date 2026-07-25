@@ -6,15 +6,9 @@
 - pnpm 9 (the repository pins pnpm 9.15.9)
 - 2 GB RAM for the complete quality/build workflow
 
-## From a package registry (after publication)
+## Installation boundary
 
-The packages are not published to npm from this repository yet. After an operator-authorized release, install the packages you need:
-
-```sh
-pnpm add @operatoros-platform/evidence-service @operatoros-platform/workspace-service @operatoros-platform/execution-service @operatoros-platform/interface-host
-```
-
-Package-level guides and exports are documented in each package README. Generate the local API reference with `pnpm docs:build`.
+OperatorOS Platform v1.0 is distributed as this repository. All workspace packages are private implementation units and are not published as registry packages.
 
 ## From source
 

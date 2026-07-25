@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 200" width="600" height="200" role="img" aria-labelledby="logo-title logo-desc">
+  <title id="logo-title">OperatorOS Platform</title>
+  <desc id="logo-desc">OperatorOS Platform wordmark on a dark background with a four-ring symbol representing the four authoritative components.</desc>
+
+  <!-- Dark background -->
+  <rect x="0" y="0" width="600" height="200" fill="#0b1020"/>
+
+  <!-- Symbol: four concentric rings representing the four authoritative components -->
+  <g transform="translate(100, 100)">
+    <circle cx="0" cy="0" r="62" fill="none" stroke="#22d3ee" stroke-width="1.5" opacity="0.35"/>
+    <circle cx="0" cy="0" r="46" fill="none" stroke="#22d3ee" stroke-width="1.5" opacity="0.6"/>
+    <circle cx="0" cy="0" r="30" fill="none" stroke="#22d3ee" stroke-width="1.5" opacity="0.85"/>
+    <circle cx="0" cy="0" r="14" fill="#22d3ee"/>
+    <!-- Four cardinal markers (the four components) -->
+    <circle cx="0" cy="-62" r="4" fill="#ffffff"/>
+    <circle cx="62" cy="0" r="4" fill="#ffffff"/>
+    <circle cx="0" cy="62" r="4" fill="#ffffff"/>
+    <circle cx="-62" cy="0" r="4" fill="#ffffff"/>
+  </g>
+
+  <!-- Wordmark -->
+  <g font-family="Inter, system-ui, sans-serif" fill="#ffffff">
+    <text x="200" y="100" font-size="34" font-weight="700">OperatorOS</text>
+    <text x="200" y="135" font-size="20" font-weight="400" fill="#9aa3b2">Platform</text>
+  </g>
+
+  <!-- Tagline -->
+  <text x="200" y="160" font-family="Inter, system-ui, sans-serif" font-size="12" font-weight="500" fill="#22d3ee" letter-spacing="2">LOCAL-FIRST · EVIDENCE-LEDGER</text>
+</svg>

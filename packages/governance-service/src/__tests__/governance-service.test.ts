@@ -79,6 +79,14 @@ describe('IP-006 Governance Service', () => {
       subject_identity_ref: 'identity://operator/taras',
     });
     expect(ok).toMatchObject({ outcome: 'committed', record_version: 2 });
+    if (ok.outcome === 'committed') {
+      expect(ok.record).toMatchObject({
+        entity_id: 'operator_taras',
+        identity_ref: 'identity://operator/taras',
+        workspace_ref: 'workspace_main',
+        state: 'suspended',
+      });
+    }
     await ctx.cleanup();
   });
 
@@ -106,6 +114,19 @@ describe('IP-006 Governance Service', () => {
       revoker_ref: 'identity://admin/taras',
     });
     expect(revoked).toMatchObject({ outcome: 'committed', record_version: 2 });
+    if (revoked.outcome === 'committed') {
+      expect(revoked.record).toMatchObject({
+        grant_id: 'grant_01',
+        entity_id: 'entity_grant_01',
+        subject_ref: 'identity://operator/taras',
+        capability_definition_ref: 'cap_def_runtime',
+        scope: 'runtime:execute',
+        workspace_ref: 'workspace_main',
+        state: 'revoked',
+        revoker_ref: 'identity://admin/taras',
+      });
+      expect(revoked.record.granted_at).not.toBe('');
+    }
     const stillActive = ctx.service.listActiveGrantsFor({
       subject_ref: 'identity://operator/taras',
     });
@@ -116,9 +137,9 @@ describe('IP-006 Governance Service', () => {
   it('publishes configuration revisions and computes the effective configuration by precedence', async () => {
     const ctx = await makeGovernance();
     const low = ctx.service.publishRevision({
-      config_ref: 'cfg_workspace_low',
+      config_ref: 'cfg_deployment_default',
       entity_id: 'cfg_entity_low',
-      scope: 'workspace',
+      scope: 'deployment-profile',
       precedence: 10,
       payload: { feature_flag_a: false, network_allow_list: ['10.0.0.0/8'] },
       workspace_ref: 'workspace_main',
@@ -126,10 +147,10 @@ describe('IP-006 Governance Service', () => {
     expect(low.outcome).toBe('committed');
 
     const high = ctx.service.publishRevision({
-      config_ref: 'cfg_workspace_high',
+      config_ref: 'cfg_run_override',
       entity_id: 'cfg_entity_high',
-      scope: 'workspace',
-      precedence: 100,
+      scope: 'run',
+      precedence: 1,
       payload: { feature_flag_a: true, audit_sink: 'sqlite://./audit' },
       workspace_ref: 'workspace_main',
     });
@@ -147,10 +168,35 @@ describe('IP-006 Governance Service', () => {
         audit_sink: 'sqlite://./audit',
       });
       const precedences = effective.effective.resolved_precedence.map((r) => r.precedence);
-      expect(precedences).toEqual([100, 10]);
+      expect(precedences).toEqual([1, 10]);
+      expect(effective.effective.resolved_precedence.map((r) => r.scope)).toEqual([
+        'run',
+        'deployment-profile',
+      ]);
       expect(effective.effective.approver_refs).toEqual(['identity://admin/taras']);
       expect(effective.effective.digest).toMatch(/^[0-9a-f]{64}$/);
     }
+    await ctx.cleanup();
+  });
+
+  it('rejects equal precedence conflicts at the same scope instead of guessing', async () => {
+    const ctx = await makeGovernance();
+    for (const config_ref of ['cfg_equal_a', 'cfg_equal_b']) {
+      ctx.service.publishRevision({
+        config_ref,
+        entity_id: `${config_ref}_entity`,
+        scope: 'workspace',
+        precedence: 50,
+        payload: { shared_key: config_ref },
+        workspace_ref: 'workspace_main',
+      });
+    }
+    expect(
+      ctx.service.computeEffectiveConfiguration({
+        workspace_ref: 'workspace_main',
+        approver_refs: ['identity://admin/taras'],
+      }),
+    ).toMatchObject({ outcome: 'rejected', reason: 'EQUAL_PRECEDENCE_CONFLICT:workspace:50' });
     await ctx.cleanup();
   });
 
@@ -168,6 +214,62 @@ describe('IP-006 Governance Service', () => {
       outcome: 'rejected',
       reason: 'PRECEDENCE_NOT_INTEGER_NONNEGATIVE',
     });
+    await ctx.cleanup();
+  });
+
+  it('listActiveGrantsFor excludes time-expired grants by default; include_expired flag revives them', async () => {
+    const ctx = await makeGovernance();
+    // Active grant with no expiry — must always be present.
+    const permanent = ctx.service.issueGrant({
+      grant_id: 'grant_permanent',
+      entity_id: 'entity_permanent',
+      subject_ref: 'identity://operator/taras',
+      capability_definition_ref: 'cap_def_runtime',
+      scope: 'runtime:execute',
+      workspace_ref: 'workspace_main',
+    });
+    expect(permanent.outcome).toBe('committed');
+    // Active grant with expiry in the past — must be filtered out by default.
+    const past = new Date(Date.now() - 60_000).toISOString();
+    const expired = ctx.service.issueGrant({
+      grant_id: 'grant_expired',
+      entity_id: 'entity_expired',
+      subject_ref: 'identity://operator/taras',
+      capability_definition_ref: 'cap_def_runtime',
+      scope: 'runtime:execute',
+      workspace_ref: 'workspace_main',
+      expires_at: past,
+    });
+    expect(expired.outcome).toBe('committed');
+    // Active grant with expiry in the future — must still be present.
+    const future = new Date(Date.now() + 60_000).toISOString();
+    const stillLive = ctx.service.issueGrant({
+      grant_id: 'grant_live',
+      entity_id: 'entity_live',
+      subject_ref: 'identity://operator/taras',
+      capability_definition_ref: 'cap_def_runtime',
+      scope: 'runtime:execute',
+      workspace_ref: 'workspace_main',
+      expires_at: future,
+    });
+    expect(stillLive.outcome).toBe('committed');
+
+    // Default behaviour: time-expired grant is filtered out.
+    const filtered = ctx.service.listActiveGrantsFor({
+      subject_ref: 'identity://operator/taras',
+    });
+    expect(filtered.map((g) => g.grant_id).sort()).toEqual(['grant_live', 'grant_permanent']);
+
+    // Explicit exclude_expired: false: time-expired grant is visible.
+    const all = ctx.service.listActiveGrantsFor({
+      subject_ref: 'identity://operator/taras',
+      exclude_expired: false,
+    });
+    expect(all.map((g) => g.grant_id).sort()).toEqual([
+      'grant_expired',
+      'grant_live',
+      'grant_permanent',
+    ]);
     await ctx.cleanup();
   });
 
@@ -191,6 +293,18 @@ describe('IP-006 Governance Service', () => {
       expected_version: 1,
     });
     expect(ok).toMatchObject({ outcome: 'committed', record_version: 2 });
+    if (ok.outcome === 'committed') {
+      expect(ok.record).toMatchObject({
+        config_ref: 'cfg_retire',
+        entity_id: 'cfg_entity_retire',
+        scope: 'mission',
+        precedence: 50,
+        payload: { mission_default: true },
+        workspace_ref: 'workspace_main',
+        state: 'retired',
+      });
+      expect(ok.record.digest).toMatch(/^[0-9a-f]{64}$/);
+    }
     await ctx.cleanup();
   });
 });

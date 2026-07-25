@@ -1,0 +1,36 @@
+{
+  "name": "@operatoros-platform/cli",
+  "version": "1.0.0",
+  "description": "OperatorOS Platform local CLI — exercises the in-process interface-host dispatcher. Architecture §6 §UX-CLI-01 UX-CLI-02 UX-DISC-04 UX-EX-02.",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "bin": {
+    "operatoros": "./dist/index.js"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "build": "tsc -p tsconfig.json",
+    "test": "vitest run --config ../../vitest.config.ts",
+    "clean": "node -e \"require('node:fs').rmSync('dist',{recursive:true,force:true})\""
+  },
+  "dependencies": {
+    "@operatoros-platform/contracts": "workspace:*",
+    "@operatoros-platform/evidence-service": "workspace:*",
+    "@operatoros-platform/execution-service": "workspace:*",
+    "@operatoros-platform/governance-service": "workspace:*",
+    "@operatoros-platform/interface-host": "workspace:*",
+    "@operatoros-platform/workspace-service": "workspace:*"
+  }
+}

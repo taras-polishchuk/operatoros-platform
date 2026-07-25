@@ -1,7 +1,7 @@
 {
   "name": "@operatoros-platform/execution-service",
-  "version": "0.0.0-development",
-  "description": "OperatorOS Platform \u2014 Mission Execution Specification, Run state machine, Mission Record",
+  "version": "1.0.0",
+  "description": "OperatorOS Platform — Mission Execution Specification, Run state machine, Mission Record",
   "type": "module",
   "private": true,
   "main": "./dist/index.js",
@@ -22,5 +22,6 @@
   "dependencies": {
     "@operatoros-platform/contracts": "workspace:*",
     "@operatoros-platform/evidence-service": "workspace:*"
-  }
+  },
+  "license": "MIT"
 }

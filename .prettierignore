@@ -4,3 +4,6 @@ artifacts/reports
 docs/api
 pnpm-lock.yaml
 docs/authorities
+homepage
+landing-page-preview.html
+.github

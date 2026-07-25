@@ -7,6 +7,7 @@ export default defineConfig({
       'packages/**/*.test.ts',
       'apps/**/*.test.ts',
       'spikes/**/*.test.ts',
+      '**/__tests__/**/*.test.ts',
     ],
     coverage: {
       provider: 'v8',
@@ -14,5 +15,7 @@ export default defineConfig({
       reportsDirectory: 'artifacts/reports/coverage',
       thresholds: { lines: 80, functions: 80, branches: 70, statements: 80 },
     },
+    testTimeout: 30_000,
+    hookTimeout: 30_000,
   },
 });

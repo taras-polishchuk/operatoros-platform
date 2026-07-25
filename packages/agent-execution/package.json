@@ -1,6 +1,6 @@
 {
   "name": "@operatoros-platform/agent-execution",
-  "version": "0.0.0-development",
+  "version": "1.0.0",
   "description": "OperatorOS Platform — Agent Execution service: agent-registration, capability matching, invocation routing, agent-result persistence",
   "type": "module",
   "private": true,
@@ -24,5 +24,6 @@
     "@operatoros-platform/evidence-service": "workspace:*",
     "@operatoros-platform/governance-service": "workspace:*",
     "@operatoros-platform/execution-service": "workspace:*"
-  }
+  },
+  "license": "MIT"
 }

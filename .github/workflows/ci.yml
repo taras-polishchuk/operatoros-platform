@@ -4,33 +4,25 @@ on:
   push:
     branches: [main]
   pull_request:
-
-permissions:
-  contents: read
+    branches: [main]
 
 jobs:
   quality:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
         with:
           version: 9.15.9
-          run_install: false
       - uses: actions/setup-node@v4
         with:
-          node-version-file: .node-version
-          cache: pnpm
+          node-version: 22
+          cache: 'pnpm'
       - run: pnpm install --frozen-lockfile
       - run: pnpm quality
-      - run: pnpm run docs:build
       - run: pnpm security:scan
       - run: pnpm licenses:report
       - run: pnpm sbom
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: quality-evidence
-          path: artifacts/reports
-          if-no-files-found: warn
+    env:
+      CI: true

@@ -1,22 +1,25 @@
-name: Release Candidate
+name: Release Candidate Validation
 
 on:
   workflow_dispatch:
     inputs:
-      milestone:
-        description: Milestone gate to validate
+      candidate:
+        description: Candidate label recorded with the evidence artifact
         required: true
-        type: choice
-        options: [M0, M1, M2, M3, M4]
+        default: v1.0-local
+        type: string
 
 permissions:
   contents: read
 
 jobs:
-  rc:
+  validate:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: pnpm/action-setup@v4
         with:
           version: 9.15.9
@@ -25,18 +28,22 @@ jobs:
         with:
           node-version-file: .node-version
           cache: pnpm
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm quality
-      - run: pnpm security:scan
-      - run: pnpm licenses:report
-      - run: pnpm sbom
-      - name: Refuse unimplemented gate
+      - name: Verify candidate
+        run: pnpm clean-tree:verify
+      - name: Record candidate identity
         run: |
-          test -f "artifacts/evidence/${{ inputs.milestone }}/manifest.json" || {
-            echo "No immutable evidence bundle for ${{ inputs.milestone }}" >&2
-            exit 1
-          }
-      - uses: actions/upload-artifact@v4
+          mkdir -p artifacts/reports/release-candidate
+          printf '%s\n' \
+            "candidate=${{ inputs.candidate }}" \
+            "commit=${GITHUB_SHA}" \
+            "workflow_run=${GITHUB_RUN_ID}" \
+            > artifacts/reports/release-candidate/identity.txt
+      - name: Upload validation evidence
+        uses: actions/upload-artifact@v4
         with:
-          name: operatoros-platform-${{ inputs.milestone }}-candidate
-          path: artifacts/evidence/${{ inputs.milestone }}
+          name: operatoros-${{ inputs.candidate }}-${{ github.sha }}
+          path: |
+            artifacts/release-candidates/v1.0/
+            artifacts/reports/
+            docs/api/
+          if-no-files-found: error

@@ -110,17 +110,13 @@ export function createSqliteRecoveryStore(options: { databasePath: string }) {
       ON checkpoints(run_ref, workspace_ref, cursor);
   `);
 
-  let fencingSequence = 0;
-  let contenderSequence = 0;
-
-  function nextFencing(): number {
-    fencingSequence += 1;
-    return fencingSequence;
-  }
-
-  function nextContenderSeq(): number {
-    contenderSequence += 1;
-    return contenderSequence;
+  function nextSequences(): { fencing: number; contender: number } {
+    const row = database
+      .prepare(
+        'SELECT COALESCE(MAX(fencing_token), 0) AS fencing, COALESCE(MAX(contender_seq), 0) AS contender FROM recovery_leases',
+      )
+      .get() as { fencing: number; contender: number };
+    return { fencing: row.fencing + 1, contender: row.contender + 1 };
   }
 
   function createCheckpoint(input: {
@@ -257,10 +253,9 @@ export function createSqliteRecoveryStore(options: { databasePath: string }) {
       .run(input.workspace_ref);
     const nowIso = new Date(now).toISOString();
     const lease_id = `lease_${digest({ workspace_ref: input.workspace_ref, holder: input.holder, now: nowIso }).slice(0, 16)}`;
-    const fencing = nextFencing();
-    const seq = nextContenderSeq();
     database.exec('BEGIN IMMEDIATE');
     try {
+      const { fencing, contender: seq } = nextSequences();
       database
         .prepare(`INSERT INTO recovery_leases VALUES (?, ?, ?, ?, ?, ?, 'active', ?, ?, 1, ?)`)
         .run(
@@ -279,23 +274,23 @@ export function createSqliteRecoveryStore(options: { databasePath: string }) {
           nowIso,
         );
       database.exec('COMMIT');
+      return {
+        outcome: 'committed',
+        lease: {
+          workspace_ref: input.workspace_ref,
+          lease_id,
+          holder: input.holder,
+          acquired_at: nowIso,
+          expires_at: expiresAt,
+          state: 'active',
+          fencing_token: fencing,
+          contender_seq: seq,
+        },
+      };
     } catch (error) {
       database.exec('ROLLBACK');
       throw error;
     }
-    return {
-      outcome: 'committed',
-      lease: {
-        workspace_ref: input.workspace_ref,
-        lease_id,
-        holder: input.holder,
-        acquired_at: nowIso,
-        expires_at: expiresAt,
-        state: 'active',
-        fencing_token: fencing,
-        contender_seq: seq,
-      },
-    };
   }
 
   function releaseLease(input: { lease_id: string; expected_version: number }): {

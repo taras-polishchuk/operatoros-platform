@@ -1,6 +1,6 @@
 {
   "name": "@operatoros-platform/interface-host",
-  "version": "0.0.0-development",
+  "version": "1.0.0",
   "private": true,
   "type": "module",
   "exports": {
@@ -25,5 +25,6 @@
     "@operatoros-platform/workspace-service": "workspace:*",
     "@operatoros-platform/governance-service": "workspace:*",
     "@operatoros-platform/execution-service": "workspace:*"
-  }
+  },
+  "license": "MIT"
 }

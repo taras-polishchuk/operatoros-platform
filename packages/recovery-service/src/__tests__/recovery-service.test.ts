@@ -21,6 +21,12 @@ async function makeStore() {
   };
 }
 
+async function makeReopenableStore() {
+  const root = await mkdtemp(join(tmpdir(), 'operatoros-recovery-reopen-'));
+  tempDirectories.push(root);
+  return { databasePath: join(root, 'recovery.sqlite') };
+}
+
 beforeEach(() => {
   tempDirectories.length = 0;
 });
@@ -129,6 +135,33 @@ describe('IP-010 Recovery — Checkpoint, Lease, Dual-contender, Snapshot Restor
       expect(third.lease.contender_seq).toBe(2);
     }
     await ctx.cleanup();
+  });
+
+  it('keeps fencing and contender sequences monotonic after the store is reopened', async () => {
+    const ctx = await makeReopenableStore();
+    const firstStore = createSqliteRecoveryStore({ databasePath: ctx.databasePath });
+    const first = firstStore.acquireLease({
+      workspace_ref: 'workspace_restart',
+      holder: { kind: 'process', process_ref: 'process_before_restart' },
+      ttl_ms: 60_000,
+    });
+    expect(first.outcome).toBe('committed');
+    if (first.outcome !== 'committed') throw new Error('expected first lease');
+    firstStore.releaseLease({ lease_id: first.lease.lease_id, expected_version: 1 });
+    firstStore.close();
+
+    const reopened = createSqliteRecoveryStore({ databasePath: ctx.databasePath });
+    const second = reopened.acquireLease({
+      workspace_ref: 'workspace_restart',
+      holder: { kind: 'process', process_ref: 'process_after_restart' },
+      ttl_ms: 60_000,
+    });
+    expect(second.outcome).toBe('committed');
+    if (second.outcome === 'committed') {
+      expect(second.lease.fencing_token).toBeGreaterThan(first.lease.fencing_token);
+      expect(second.lease.contender_seq).toBeGreaterThan(first.lease.contender_seq);
+    }
+    reopened.close();
   });
 
   it('renews a lease, rejects renew with stale fencing_token, and rejects renew on released lease', async () => {

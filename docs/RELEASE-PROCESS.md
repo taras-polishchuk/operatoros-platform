@@ -32,6 +32,16 @@ pnpm sbom
 
 The core `pnpm quality` command covers format, lint, typecheck, coverage, build, contracts, and architecture checks.
 
+## Reproducible clean-tree verification
+
+Run the complete repository-only acceptance sequence with:
+
+```sh
+pnpm clean-tree:verify
+```
+
+It performs the frozen pnpm install, quality gate, smoke path, docs build, security scan, license report, SBOM, and release-manifest verification. It does not create a tag, push, publish a package, or create a GitHub Release.
+
 ## Release gates E/G/H/K
 
 - **E — architecture consistency:** frozen authorities, lock file, and architecture invariants agree.

@@ -27,7 +27,9 @@ pnpm build
 pnpm test apps/smoke
 ```
 
-For the guided five-minute flow, see [Getting Started](docs/GETTING-STARTED.md). Source integrators can compose the factories exported from `packages/workspace-service/src/`, `packages/execution-service/src/`, and `packages/evidence-service/src/`. The workspace packages are private monorepo units in v1.0; no npm package or standalone SDK is published.
+For the guided five-minute flow, see [Getting Started](docs/GETTING-STARTED.md). Source integrators can compose the factories exported from `packages/workspace-service/src/`, `packages/execution-service/src/`, and `packages/evidence-service/src/`. The workspace packages are private monorepo units in v1.0; no registry package or standalone SDK is published.
+
+For a one-command maintained demonstration, run `pnpm demo`. For the complete repository acceptance sequence, run `pnpm clean-tree:verify`.
 
 ## Quick start
 

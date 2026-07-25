@@ -14,7 +14,7 @@
       "path": "artifacts/release-candidates/v1.0/rc1-manifest.json",
       "kind": "json",
       "role": "primary",
-      "sha256": "ff0c190e8a7633e192b45136c76413ef9d0387d766f8f4baa94671d92df1baba",
+      "sha256": "d6f3bc22876b7416ad27a456233be529f367d7df74482d029466c96c39d2225e",
       "description": "Single-locked v1.0 release manifest. Reports milestones, gates, NFRs, packages, and per-artifact evidence pointers."
     },
     {
@@ -22,7 +22,7 @@
       "path": "artifacts/release-candidates/v1.0/CHANGELOG.md",
       "kind": "markdown",
       "role": "release-notes",
-      "sha256": "7172c2f6fad3acfa330750e0fd3fbc08507c46bdb37d63a44f4a23f67d8fc2c1",
+      "sha256": "49b5d3dc48f340fadc692db2799486676f73df631f533133a6ea89e77f9d19c3",
       "description": "v1.0.0 + v1.0.0-rc1 release notes; documents the 4-day public-readiness window between rc1 and v1.0."
     },
     {
@@ -30,7 +30,7 @@
       "path": "artifacts/release-candidates/v1.0/final-report.md",
       "kind": "markdown",
       "role": "report",
-      "sha256": "dda09435c6c779525ba129a61d20a4ff2ae64931c40ac20bd7751075ae859d37",
+      "sha256": "b4e12d4c4a51e4b66a4d126de0e41533cb871add49771f6eb52441317575d7c1",
       "description": "v1.0 candidate report covering local validation and the pending publication boundary."
     },
     {
@@ -70,7 +70,7 @@
       "path": "artifacts/release-candidates/v1.0/MANIFEST.json",
       "kind": "json",
       "role": "manifest-of-manifests",
-      "sha256": "710e52df358468287b96be3ef126689fb24272af22d7a31a6640a40039fec3b0",
+      "sha256": "eaa0fec0c0a07533fcc75bbaf99e8c6a0b9775fc794c66170e7b7af424138177",
       "description": "Self-referential top-level manifest enumerating every v1.0 release artifact with its SHA-256. The self-reference SHA-256 is the value of the file after the self-entry was added; a verifying consumer should recompute the hash on disk and accept that it equals this value if and only if the surrounding context matches."
     },
     {
@@ -78,7 +78,7 @@
       "path": "artifacts/release-candidates/v1.0/QUALITY-GATE.md",
       "kind": "markdown",
       "role": "quality-gate",
-      "sha256": "ef7f0336184633d44dbc8d424b7c0549f8d34c00ff33e18292d5de9ce39ef416",
+      "sha256": "b61da2665609d9305992d12067ae6d0ca399e16998edb04364328ab9533d3dfd",
       "description": "Consolidated evidence for all 11 quality gates (format, lint, typecheck, test:coverage, build, contracts:verify, architecture:check, docs:build, security:scan, licenses:report, sbom) plus the NFR matrix."
     },
     {
@@ -86,7 +86,7 @@
       "path": "artifacts/release-candidates/v1.0/PORTFOLIO.md",
       "kind": "markdown",
       "role": "portfolio",
-      "sha256": "33f724b471a8ae13cda2d9d4f490376f83a607c306bf72485bfbbc1d54135235",
+      "sha256": "d8cb88f3f3c99bdcdfe57df8da9e9b527081b85966d7c2176607f296abbc4d2b",
       "description": "Catalog of candidate visual, narrative, and reference assets: landing page, architecture diagrams, public docs, scoped local source reference, project root files, and this bundle."
     },
     {
@@ -94,7 +94,7 @@
       "path": "artifacts/release-candidates/v1.0/verify-manifest.mjs",
       "kind": "javascript",
       "role": "verifier",
-      "sha256": "65aedb582bf499cff5c586ab255e4abcc209127f7871039f48bfe0963afeade9",
+      "sha256": "dd3432c5f117941a3eb4a73a1d973eeb388c1db38769cda312d479455b4fbd00",
       "description": "Standalone Node.js script that recomputes every artifact's SHA-256 and compares it to the value recorded in this MANIFEST.json. Exits 0 if all 9 non-self references verify; the self-reference is tolerated with an explicit drift warning."
     }
   ],

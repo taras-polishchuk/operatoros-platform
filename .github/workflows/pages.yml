@@ -1,0 +1,57 @@
+name: GitHub Pages
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'homepage/**'
+      - '.github/workflows/pages.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build homepage
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Copy homepage to artifact staging
+        run: |
+          mkdir -p _site
+          cp -r homepage/. _site/
+          # Strip any trailing-slash references in HTML so root-relative
+          # links resolve correctly when hosted at https://<owner>.github.io/<repo>/
+          find _site -name '*.html' -print0 | xargs -0 sed -i 's|href="styles.css"|href="./styles.css"|g; s|href="script.js"|href="./script.js"|g; s|href="assets/|href="./assets/|g'
+          # Add a .nojekyll so the underscore-prefixed assets directory
+          # is not blocked by GitHub Pages' Jekyll filter.
+          touch _site/.nojekyll
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    name: Deploy to GitHub Pages
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

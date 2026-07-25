@@ -1,0 +1,19 @@
+cff-version: 1.2.0
+message: 'If you use this software, please cite it as below.'
+type: software
+title: 'OperatorOS Platform'
+version: 1.0.0
+date-released: 2026-07-24
+authors:
+  - family-names: Polishchuk
+    given-names: Taras
+license: MIT
+repository-code: 'https://github.com/taras-polishchuk/operatoros-platform'
+keywords:
+  - mission-execution
+  - evidence-ledger
+  - local-first
+  - operator-controlled
+  - workflow-engine
+  - recovery-protocol
+  - capability-based-security

@@ -1,0 +1,11 @@
+# Default ownership — all paths require review from @taras-polishchuk
+* @taras-polishchuk
+
+# Architecture-critical surfaces — review from project owner only
+/packages/contracts/ @taras-polishchuk
+/packages/evidence-service/ @taras-polishchuk
+/apps/smoke/ @taras-polishchuk
+
+# Authority root — single-owner gate for the architecture SHA-256 contract
+/authority-lock.json @taras-polishchuk
+/docs/authorities/ @taras-polishchuk

@@ -1,10 +1,10 @@
 {
   "name": "operatoros-platform",
-  "version": "1.0.0-rc1",
+  "version": "1.0.0",
   "private": true,
-  "license": "UNLICENSED",
+  "license": "MIT",
   "type": "module",
-  "description": "Operator-controlled, local-first, event-evidenced Mission execution platform.",
+  "description": "Local-first Mission execution platform. Operator-controlled runs, durable evidence ledger, and recoverable checkpoints.",
   "packageManager": "pnpm@9.15.9",
   "engines": {
     "node": ">=22.0.0"
@@ -27,6 +27,8 @@
     "security:scan": "pnpm audit --audit-level high && node tooling/security-scan.mjs",
     "licenses:report": "node tooling/license-report.mjs",
     "sbom": "node tooling/sbom.mjs",
+    "demo": "bash scripts/demo.sh",
+    "clean-tree:verify": "node tooling/verify-clean-tree.mjs",
     "quality": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test:coverage && pnpm build && pnpm contracts:verify && pnpm architecture:check"
   },
   "devDependencies": {
@@ -43,5 +45,13 @@
     "vitest": "4.1.0",
     "zod": "3.25.76",
     "zod-to-json-schema": "3.25.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/taras-polishchuk/operatoros-platform.git"
+  },
+  "homepage": "https://taras-polishchuk.github.io/operatoros-platform/",
+  "bugs": {
+    "url": "https://github.com/taras-polishchuk/operatoros-platform/issues"
   }
 }

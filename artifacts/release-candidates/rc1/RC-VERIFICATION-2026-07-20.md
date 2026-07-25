@@ -18,26 +18,26 @@ every claim in that report and identified the release-readiness gaps that remain
 
 ## Release candidate: `v1.0.0-rc1`
 
-| Acceptance criterion | Status | Evidence |
-|----------------------|--------|----------|
-| Architecture frozen + locked | PASS | SHA `1e79049d...` in `authority-lock.json` |
-| 8/8 frozen authorities verified | PASS | `pnpm contracts:verify` exit 0 |
-| 5/5 architecture invariants pass | PASS | `pnpm architecture:check` exit 0 |
-| 132/132 tests pass | PASS | `pnpm test` exit 0, 20 test files, 4.73s |
-| 13 packages implemented | PASS | `ls operatoros-platform/packages/` |
-| 14/14 turbo tasks build | PASS | `pnpm build` exit 0 |
-| No security vulnerabilities | PASS | `pnpm security:scan` exit 0 |
-| Production-dependency licenses recorded | PASS | `pnpm licenses:report` exit 0 |
-| CycloneDX SBOM emitted | PASS | `pnpm sbom` exit 0 |
-| NFR matrix met (perf/rel/use) | PASS | NFRs PASS as documented |
-| Smoke golden path | PASS | `apps/smoke` 3/3 tests, idempotent |
+| Acceptance criterion                    | Status | Evidence                                   |
+| --------------------------------------- | ------ | ------------------------------------------ |
+| Architecture frozen + locked            | PASS   | SHA `1e79049d...` in `authority-lock.json` |
+| 8/8 frozen authorities verified         | PASS   | `pnpm contracts:verify` exit 0             |
+| 5/5 architecture invariants pass        | PASS   | `pnpm architecture:check` exit 0           |
+| 132/132 tests pass                      | PASS   | `pnpm test` exit 0, 20 test files, 4.73s   |
+| 13 packages implemented                 | PASS   | `ls operatoros-platform/packages/`         |
+| 14/14 turbo tasks build                 | PASS   | `pnpm build` exit 0                        |
+| No security vulnerabilities             | PASS   | `pnpm security:scan` exit 0                |
+| Production-dependency licenses recorded | PASS   | `pnpm licenses:report` exit 0              |
+| CycloneDX SBOM emitted                  | PASS   | `pnpm sbom` exit 0                         |
+| NFR matrix met (perf/rel/use)           | PASS   | NFRs PASS as documented                    |
+| Smoke golden path                       | PASS   | `apps/smoke` 3/3 tests, idempotent         |
 
 ## Release metadata reconciliation
 
 This mission repaired one drift:
 
-| Item | Before | After |
-|------|--------|-------|
+| Item                   | Before              | After       |
+| ---------------------- | ------------------- | ----------- |
 | `package.json#version` | `0.0.0-development` | `1.0.0-rc1` |
 
 Rationale: narrative documents (README, RC manifest, release notes) consistently

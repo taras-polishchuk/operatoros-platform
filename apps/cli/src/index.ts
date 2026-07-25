@@ -45,7 +45,7 @@ export interface CliRunOptions {
  * The CLI hands every subcommand a fresh, isolated in-process dispatcher so
  * tests can run against predictable state.
  */
-export async function buildContext(options: CliRunOptions = {}): Promise<CliContext> {
+export function buildContext(options: CliRunOptions = {}): CliContext {
   // A CLI invocation must not silently lose state. Keep the default workspace
   // durable; callers that need isolation (tests/automation) pass --workspace.
   const root = options.workspace ?? join(homedir(), '.operatoros', 'workspace');
@@ -54,6 +54,7 @@ export async function buildContext(options: CliRunOptions = {}): Promise<CliCont
     cleanup: async () => {
       // Workspace data is user-owned and is never removed by the CLI.
       void options.cleanupOnExit;
+      await Promise.resolve();
     },
   };
   return ctx;
@@ -224,7 +225,10 @@ export function buildHelpDoc(): HelpDoc {
     ],
     flags: [
       { name: '--json', description: 'Emit the result as JSON to stdout.' },
-      { name: '--workspace <path>', description: 'SQLite workspace root (default: ~/.operatoros/workspace).' },
+      {
+        name: '--workspace <path>',
+        description: 'SQLite workspace root (default: ~/.operatoros/workspace).',
+      },
       { name: '--identity <ref>', description: 'Subject identity ref (identity:// / service://).' },
       { name: '--correlation <id>', description: 'Correlation id for the dispatch.' },
       { name: '--workspace-ref <ref>', description: 'Workspace reference (workspace_/…).' },
@@ -393,7 +397,7 @@ export async function run(argv: readonly string[]): Promise<CommandResult> {
     'mission.cancel': ['entity_id', 'identity', 'correlation'],
   };
   const earlyMissing = requiredByCommand[cmd]
-    ? validateRequired(requiredByCommand[cmd]!, parsed)
+    ? validateRequired(requiredByCommand[cmd], parsed)
     : [];
   if (earlyMissing.length > 0) {
     return makeResult(cmd, 1, '', `Missing required flags: ${earlyMissing.join(', ')}`, {
@@ -404,7 +408,7 @@ export async function run(argv: readonly string[]): Promise<CommandResult> {
   try {
     const runOpts: CliRunOptions = {};
     if (parsed.flags.workspace !== undefined) runOpts.workspace = parsed.flags.workspace;
-    ctx = await buildContext(runOpts);
+    ctx = buildContext(runOpts);
     const dispatcher = await buildDispatcher(ctx.workspaceRoot);
 
     if (cmd === 'init') {

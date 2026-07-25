@@ -35,10 +35,10 @@ export async function verifyAuthorities(lockUrl: URL): Promise<AuthorityVerifica
   await Promise.all(
     Object.entries(lock.authorities).map(async ([snapshotName, authority]) => {
       const snapshotUrl = new URL(snapshotName, authorityDirectoryUrl);
-      const [snapshot, source] = await Promise.all([
-        readFile(snapshotUrl),
-        readFile(authority.source),
-      ]);
+      const sourceUrl = authority.source.startsWith('/')
+        ? new URL(`file://${authority.source}`)
+        : new URL(authority.source, lockUrl);
+      const [snapshot, source] = await Promise.all([readFile(snapshotUrl), readFile(sourceUrl)]);
       const snapshotDigest = sha256(snapshot);
       const sourceDigest = sha256(source);
 

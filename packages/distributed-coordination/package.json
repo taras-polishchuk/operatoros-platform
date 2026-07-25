@@ -1,6 +1,6 @@
 {
   "name": "@operatoros-platform/distributed-coordination",
-  "version": "0.0.0-development",
+  "version": "1.0.0",
   "description": "OperatorOS Platform — Distributed coordination: cross-host replication, fencing-token + lease coordination, snapshot reconcile, distributed consistency",
   "type": "module",
   "private": true,
@@ -22,5 +22,6 @@
   "dependencies": {
     "@operatoros-platform/contracts": "workspace:*",
     "@operatoros-platform/recovery-service": "workspace:*"
-  }
+  },
+  "license": "MIT"
 }

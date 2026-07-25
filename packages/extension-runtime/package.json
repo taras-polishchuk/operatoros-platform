@@ -1,6 +1,6 @@
 {
   "name": "@operatoros-platform/extension-runtime",
-  "version": "0.0.0-development",
+  "version": "1.0.0",
   "description": "OperatorOS Platform — Extension Runtime: staged→active lifecycle, capability grant enforcement at the extension boundary, uninstall/retire flow",
   "type": "module",
   "private": true,
@@ -23,5 +23,6 @@
     "@operatoros-platform/contracts": "workspace:*",
     "@operatoros-platform/governance-service": "workspace:*",
     "@operatoros-platform/secrets-service": "workspace:*"
-  }
+  },
+  "license": "MIT"
 }

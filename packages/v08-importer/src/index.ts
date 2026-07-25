@@ -1,4 +1,5 @@
-import { readFile, readdir, stat } from 'node:fs/promises';
+import { createHash } from 'node:crypto';
+import { mkdir, readFile, readdir, stat, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 
 import { publicContractVersion } from '@operatoros-platform/contracts';
@@ -101,7 +102,9 @@ export function createInProcessImporter(options: {
       content: Buffer;
       subject_identity_ref: string;
       supersedes?: string;
-    }): { outcome: 'committed'; record_version: number };
+    }):
+      | { outcome: 'committed'; record_version: number }
+      | { outcome: 'conflict'; deciding_source: string; current_version: number };
   };
   // The importer will NEVER receive a writer to the v0.8 root; it only reads.
   readonlyV08RootPath: string;
@@ -147,26 +150,62 @@ export function createInProcessImporter(options: {
     // For now: 1 artifact per v0.8 workspace, plus a manifest artifact recording
     // the importer version + detected counts.
     const workspaces: ImportedWorkspaceSummary[] = [];
-    for (let i = 0; i < index.workspace_count; i += 1) {
-      const v08WorkspaceId = `v08_workspace_${String(i).padStart(4, '0')}`;
-      const artifactEntityId = `imported_workspace_${String(i).padStart(4, '0')}`;
-      const contentRef = `${options.readonlyV08RootPath}/state/workspaces/${v08WorkspaceId}`;
-      const contentDigest = `sha256:${String(i).padStart(64, '0')}`;
+    const workspaceDirectory = join(options.readonlyV08RootPath, 'state', 'workspaces');
+    let workspaceFiles: string[];
+    try {
+      workspaceFiles = (await readdir(workspaceDirectory))
+        .filter((name) => name.endsWith('.json'))
+        .sort();
+    } catch (error) {
+      throw new Error(
+        `V08_WORKSPACE_DIRECTORY_UNREADABLE:${workspaceDirectory}:${error instanceof Error ? error.message : String(error)}`,
+      );
+    }
+    for (const workspaceFile of workspaceFiles) {
+      const sourcePath = join(workspaceDirectory, workspaceFile);
+      let sourceContent: Buffer;
+      let parsed: { id?: unknown };
+      try {
+        sourceContent = await readFile(sourcePath);
+        parsed = JSON.parse(sourceContent.toString('utf8')) as { id?: unknown };
+      } catch (error) {
+        throw new Error(
+          `V08_WORKSPACE_INVALID:${sourcePath}:${error instanceof Error ? error.message : String(error)}`,
+        );
+      }
+      const sourceId =
+        typeof parsed.id === 'string' && parsed.id.length > 0
+          ? parsed.id
+          : workspaceFile.replace(/\.json$/u, '');
+      const safeSourceId = sourceId.replace(/[^a-zA-Z0-9_-]/gu, '_');
+      const artifactEntityId = `imported_workspace_${safeSourceId}`;
+      const contentDigest = createHash('sha256').update(sourceContent).digest('hex');
+      const targetContentPath = join(options.defaultImportRootPath, `${artifactEntityId}.json`);
+      await mkdir(options.defaultImportRootPath, { recursive: true });
+      await writeFile(targetContentPath, sourceContent);
       const artifactOutcome = options.workspaceService.createArtifact({
         workspace_ref: input.workspace_ref,
         artifact_id: artifactEntityId,
         artifact_kind: 'imported-v08-workspace',
-        content_ref: contentRef,
-        content: Buffer.from(contentDigest, 'utf8'),
+        content_ref: targetContentPath,
+        content: sourceContent,
         subject_identity_ref: options.importerOperatorRef,
       });
-      void artifactOutcome;
+      if (artifactOutcome.outcome !== 'committed') {
+        throw new Error(`V08_WORKSPACE_IMPORT_FAILED:${sourceId}`);
+      }
       workspaces.push({
-        v08_workspace_id: v08WorkspaceId,
+        v08_workspace_id: sourceId,
         workspace_ref: input.workspace_ref,
         state: 'imported',
         imported_entities: 1,
       });
+      void contentDigest;
+    }
+    if (workspaces.length !== index.workspace_count) {
+      throw new Error(
+        `V08_WORKSPACE_COUNT_MISMATCH:catalog=${String(index.workspace_count)} files=${String(workspaces.length)}`,
+      );
     }
     // Write the importer manifest artifact.
     options.workspaceService.createArtifact({

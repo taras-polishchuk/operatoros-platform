@@ -18,7 +18,7 @@ The architecture pinned public contract version `1.0.0`. All 14 entities + 5 env
 
 **Where:** packages/evidence-service/src/index.ts.
 
-Added `openBatch`, `closeBatch`, `abortBatch` for high-throughput workloads. Each call uses SAVEPOINTs to isolate per-mutation failures. NFR-PERF-1..3 measured 3850 ops/sec at 1000 mutations.
+Added `openBatch`, `closeBatch`, `abortBatch` for high-throughput workloads. Each call uses SAVEPOINTs to isolate per-mutation failures. The historical RC1 benchmark recorded 3850 ops/sec at 1000 mutations; the current v1.0 validation uses 5000 mutations to reduce timing noise and recorded 3602–4009 ops/sec across three runs.
 
 ## D-004: Interface Host uses inline structural types
 

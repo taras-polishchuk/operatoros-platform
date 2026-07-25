@@ -1,4 +1,4 @@
-import { mkdtemp, mkdir, rm, writeFile } from 'node:fs/promises';
+import { mkdtemp, mkdir, readFile, readdir, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
@@ -106,6 +106,30 @@ describe('IP-011 v0.8 Importer (non-destructive)', () => {
     workspace.close();
   });
 
+  it('rejects a malformed v0.8 workspace before reporting a committed import', async () => {
+    const root = await makeV08Fixture({ workspaces: 1, writeCatalog: true });
+    await writeFile(join(root, 'state', 'workspaces', 'ws_0000.json'), '{not-json');
+    const target = await mkdtemp(join(tmpdir(), 'operatoros-v08-malformed-'));
+    tempDirectories.push(target);
+    const workspace = createWorkspaceService({
+      databasePath: join(target, 'workspace.sqlite'),
+      snapshotsDirectory: join(target, 'snap'),
+    });
+    const importer = createInProcessImporter({
+      workspaceService: workspace as unknown as Parameters<
+        typeof createInProcessImporter
+      >[0]['workspaceService'],
+      readonlyV08RootPath: root,
+      importerOperatorRef: 'identity://operator/taras',
+      defaultImportRootPath: join(target, 'imports'),
+    });
+    await expect(
+      importer.importToWorkspace({ workspace_ref: 'imported_v08_malformed' }),
+    ).rejects.toThrow(/V08_WORKSPACE_INVALID/u);
+    expect(workspace.listArtifacts({ workspace_ref: 'imported_v08_malformed' })).toHaveLength(0);
+    workspace.close();
+  });
+
   it('import translates v0.8 entities into OperatorOS Platform artifacts without touching v0.8', async () => {
     const root = await makeV08Fixture({ workspaces: 4, writeCatalog: true });
     const target = await mkdtemp(join(tmpdir(), 'operatoros-v08-target2-'));
@@ -131,6 +155,20 @@ describe('IP-011 v0.8 Importer (non-destructive)', () => {
     });
     expect(result.record.imported_entities.workspace_count).toBe(4);
     expect(result.record.v08_version).toMatch(/0\.8\.\d/);
+    const sourceFiles = await readdir(join(root, 'state', 'workspaces'));
+    expect(sourceFiles).toHaveLength(4);
+    const firstSourcePath = join(root, 'state', 'workspaces', sourceFiles[0] ?? '');
+    const firstSource = await readFile(firstSourcePath);
+    const imported = workspace.getArtifact({
+      workspace_ref: 'imported_v08_target',
+      artifact_id: 'imported_workspace_ws_0000',
+    });
+    expect(imported?.content_ref).toBe(join(target, 'imports', 'imported_workspace_ws_0000.json'));
+    expect(imported?.content_digest).toMatch(/^[0-9a-f]{64}$/);
+    expect(imported).not.toBeNull();
+    if (!imported) throw new Error('expected imported artifact');
+    const copiedContent = await readFile(imported.content_ref);
+    expect(copiedContent).toEqual(firstSource);
     // Verify v0.8 source untouched: count of workspace files unchanged.
     const catalog = JSON.parse(
       await (

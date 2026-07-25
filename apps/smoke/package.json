@@ -1,6 +1,6 @@
 {
   "name": "@operatoros-platform/smoke",
-  "version": "1.0.0-rc1",
+  "version": "1.0.0",
   "description": "OperatorOS Platform — End-to-end smoke wiring all 13 packages into one process: register agent → grant capability → activate extension → host-tenant run → distributed anchor.",
   "type": "module",
   "private": true,
@@ -33,5 +33,6 @@
     "@operatoros-platform/secrets-service": "workspace:*",
     "@operatoros-platform/v08-importer": "workspace:*",
     "@operatoros-platform/workspace-service": "workspace:*"
-  }
+  },
+  "license": "MIT"
 }
