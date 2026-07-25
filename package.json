@@ -9,6 +9,11 @@
   "engines": {
     "node": ">=22.0.0"
   },
+  "pnpm": {
+    "overrides": {
+      "brace-expansion": ">=5.0.8"
+    }
+  },
   "scripts": {
     "build": "turbo run build",
     "clean": "turbo run clean",

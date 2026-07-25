@@ -15,6 +15,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Made v0.8 Workspace import content-preserving with malformed-input rejection.
 - Made Workspace snapshots byte-preserving, versioned, digest-validated, and transactional for authoritative records.
 - Added the repository-only clean-tree verifier, candidate-validation workflow, demo command, homepage claim/accessibility regression checks, and backup/restore runbook.
+- Added per-package READMEs, release-publication boundary doc, and a sequence diagram for the Mission run flow.
+- Updated test totals in this CHANGELOG to reflect the current working tree (154 tests across 22 test files).
 - Local engineering completion does not imply publication: no tag, push, GitHub Release, registry package, hosted service, or multi-host deployment is included.
 
 ## [1.0.0] - publication pending
@@ -54,7 +56,7 @@ First Release Candidate of OperatorOS Platform — the canonical successor to Op
 
 ### Test totals
 
-146 tests across 21 test files, coverage thresholds 80%/80%/80%/70% (lines/functions/statements/branches).
+154 tests across 22 test files, coverage thresholds 80%/80%/80%/70% (lines/functions/statements/branches). The release-candidate snapshot recorded 132 tests across 20 files; v1.0.0 added the CLI tests (14 at RC), and the post-RC documentation + clean-tree verifier work added further assertions (current 154/22).
 
 ### Notes
 

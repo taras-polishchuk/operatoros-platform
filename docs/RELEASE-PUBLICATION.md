@@ -4,15 +4,15 @@ OperatorOS Platform v1.0 is a repository-distributed product. The 13 workspace p
 
 ## Current state
 
-| Surface | Current repository state | Publication authority |
-| --- | --- | --- |
-| Git repository | Local checkout; remote publication is not asserted here | Owner |
-| Git tag | Not created by product-completion work | Owner |
-| GitHub Release | Not created by product-completion work | Owner/tag workflow |
-| GitHub Pages | Workflow exists; deployment depends on an owner push | Owner/push workflow |
-| Package registry | Not published; package manifests are private | Successor ADR plus owner |
-| Container image | Not produced | Future decision |
-| SBOM | Local generated evidence via `pnpm sbom` | Validation workflow |
+| Surface          | Current repository state                                | Publication authority    |
+| ---------------- | ------------------------------------------------------- | ------------------------ |
+| Git repository   | Local checkout; remote publication is not asserted here | Owner                    |
+| Git tag          | Not created by product-completion work                  | Owner                    |
+| GitHub Release   | Not created by product-completion work                  | Owner/tag workflow       |
+| GitHub Pages     | Workflow exists; deployment depends on an owner push    | Owner/push workflow      |
+| Package registry | Not published; package manifests are private            | Successor ADR plus owner |
+| Container image  | Not produced                                            | Future decision          |
+| SBOM             | Local generated evidence via `pnpm sbom`                | Validation workflow      |
 
 ## Binding v1.0 decision
 
