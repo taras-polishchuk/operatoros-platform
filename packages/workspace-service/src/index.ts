@@ -2,8 +2,22 @@ import { createHash } from 'node:crypto';
 import { DatabaseSync } from 'node:sqlite';
 import { mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { dirname, join, resolve } from 'node:path';
+import * as path from 'node:path';
 
 import { publicContractVersion } from '@operatoros-platform/contracts';
+
+/**
+ * Validate that a candidate path resolves inside a base directory.
+ * Throws if the candidate escapes the base (path traversal).
+ */
+export function validatePathInside(baseDir: string, candidate: string): string {
+  const baseAbs = path.resolve(baseDir);
+  const candAbs = path.resolve(candidate);
+  if (!candAbs.startsWith(baseAbs + path.sep) && candAbs !== baseAbs) {
+    throw new Error(`PATH_OUTSIDE_BASE: ${candidate} not inside ${baseDir}`);
+  }
+  return candAbs;
+}
 
 export const packageName = '@operatoros-platform/workspace-service' as const;
 
@@ -472,9 +486,10 @@ export function createSqliteWorkspaceStore(options: { databasePath: string }) {
         };
       }),
     );
-    await mkdir(dirname(input.target_path), { recursive: true });
+    const safeTargetPath = validatePathInside(process.cwd(), input.target_path);
+    await mkdir(dirname(safeTargetPath), { recursive: true });
     await writeFile(
-      input.target_path,
+      safeTargetPath,
       JSON.stringify(
         {
           schema_version: publicContractVersion,
@@ -491,7 +506,7 @@ export function createSqliteWorkspaceStore(options: { databasePath: string }) {
     return {
       outcome: 'snapshot_built',
       workspace_ref: input.workspace_ref,
-      path: input.target_path,
+      path: safeTargetPath,
       artifact_count: artifacts.length,
     };
   }
@@ -501,7 +516,7 @@ export function createSqliteWorkspaceStore(options: { databasePath: string }) {
     root_path: string;
     source_path: string;
   }): Promise<WorkspaceResult> {
-    const raw = await readFile(input.source_path, 'utf8');
+    const raw = await readFile(validatePathInside(process.cwd(), input.source_path), 'utf8');
     const snapshot = JSON.parse(raw) as {
       schema_version: string;
       workspace_ref: string;
@@ -524,7 +539,7 @@ export function createSqliteWorkspaceStore(options: { databasePath: string }) {
       );
     }
     let imported = 0;
-    await mkdir(resolve(input.root_path), { recursive: true });
+    await mkdir(validatePathInside(process.cwd(), resolve(input.root_path)), { recursive: true });
     database.exec('BEGIN IMMEDIATE');
     try {
       for (const a of snapshot.artifacts) {
