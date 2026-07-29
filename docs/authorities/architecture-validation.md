@@ -3,7 +3,7 @@
 > **Phase:** 5 - Architecture Validation
 > **Status:** PASS WITH VALIDATION OBLIGATIONS
 > **Date:** 2026-07-19
-> **Architecture under validation:** `/home/taras/projects/OPERATOROS-PLATFORM-ARCHITECTURE-2026-07-19.md`
+> **Architecture under validation:** `/home/taras/projects/ARCHIVE/operatoros-platform-v1-audit-chain/OPERATOROS-PLATFORM-ARCHITECTURE-2026-07-19.md`
 > **Frozen Architecture SHA-256:** `880ba39a9e00e138f343d12f3f8a7a8f93b87d44a0b1a7c5c64f61925836afbd`
 > **Gate E:** PASS, SHA `5a16da872d8f04647ab72044dbaeb30f3e64ff86ea2fa9156971927e9080d7c0`
 > **Rule:** Treat the Gate-E Architecture as guilty. Validate architecture, not implementation maturity.
