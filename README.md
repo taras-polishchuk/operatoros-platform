@@ -1,6 +1,6 @@
 # OperatorOS Platform
 
-[![Build](https://img.shields.io/badge/release%20candidate-local%20validation-informational)](docs/RELEASE-PROCESS.md) [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE) [![Coverage gates](https://img.shields.io/badge/coverage%20gates-80%2F80%2F80%2F70-informational)](artifacts/release-candidates/v1.0/QUALITY-GATE.md)
+[![Build](https://img.shields.io/badge/release-v1.0.0-local%20validated-informational)](docs/RELEASE-PROCESS.md) [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE) [![Coverage gates](https://img.shields.io/badge/coverage%20gates-80%2F80%2F80%2F70-informational)](artifacts/release-candidates/v1.0/QUALITY-GATE.md)
 
 **Local-first Mission execution with an evidence ledger.**
 
@@ -10,7 +10,7 @@ OperatorOS Platform is an operator-controlled execution platform for named Missi
 
 The Local profile is the default: canonical Workspace operations work without a network and evidence is persisted in SQLite WAL. The platform is a TypeScript monorepo with four authoritative implementation components plus integration packages for agents, extensions, secrets, recovery, and migration. Hosted runtime and distributed coordination are tested contract/primitives packages, not bundled production deployments. See `packages/execution-service/src/` and `packages/evidence-service/src/` for the core implementation.
 
-This checkout contains the v1.0 release-candidate implementation. M0..M4 are closed and release gates E, G, H, and K have repository evidence; publication and tagging remain separate operator-authorized steps. The architecture remains pinned at SHA-256 `1e79049d9ae5a328556378ff8235525cd0f692bfa317fd7da6dc2bcdb1f27610`.
+This checkout contains the v1.0.0 release implementation. The `v1.0.0` annotated tag (`e4865bc7b28139174b487b795d576de855f7212a` → peel `1311f816463373673f417029e95176d7d3a3e888`) is the canonical release reference. M0..M4 are closed and release gates E, G, H, and K have repository evidence. The architecture remains pinned at SHA-256 `1e79049d9ae5a328556378ff8235525cd0f692bfa317fd7da6dc2bcdb1f27610`. Post-v1.0.0 work continues on branch `cli-closure-2026-07-24` (HEAD `ad412aa`); PyPI publication and standalone SDK are intentionally deferred.
 
 ## Why?
 
@@ -106,7 +106,7 @@ Public v1.0 publication and tagging remain pending.
 - [Installation](docs/INSTALLATION.md) · [Getting Started](docs/GETTING-STARTED.md) · [Architecture](docs/ARCHITECTURE.md)
 - [Deployment](docs/DEPLOYMENT.md) · [FAQ](docs/FAQ.md) · [Release process](docs/RELEASE-PROCESS.md)
 - Local source API reference (five core entry points): generate with `pnpm docs:build` · [Architecture authorities](docs/authorities/)
-- [Changelog](CHANGELOG.md) · [Local release-candidate report](artifacts/release-candidates/v1.0/final-report.md)
+- [Changelog](CHANGELOG.md) · [Local v1.0.0 release report](artifacts/release-candidates/v1.0/final-report.md)
 
 ## Contributing
 
