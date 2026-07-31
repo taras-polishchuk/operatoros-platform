@@ -132,7 +132,6 @@ export async function runGoldenPath(): Promise<GoldenPathReport> {
   // Phase 3 — exercise one operation per surface to confirm runtime health.
 
   // 3.1 contracts: parse + version check.
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   check('contracts.publicVersion', publicContractVersion === '1.0.0');
   ops.push('contracts.version.checked');
 
