@@ -3,6 +3,7 @@
 > **Workspace OS v2 agent contract.** This subdir is a workspace subsystem with a specific responsibility boundary. AI agents loading workspace-os should read this file before touching anything in this directory.
 
 ## Purpose
+
 OperatorOS Platform v1.0 — local-first mission execution platform. Owns the long-running mission runtime, the Kanban adapter, and the operators that drive end-to-end work-pipelines on top of OperatorOS Core.
 
 ## Operational rules

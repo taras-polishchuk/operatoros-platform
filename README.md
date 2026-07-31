@@ -130,15 +130,14 @@ Ask questions and share deployments in [SUPPORT.md](SUPPORT.md). GitHub Discussi
 
 This repository is the **TypeScript monorepo flagship** in the substrate-first stack defined by the Public Portfolio Information Architecture (PPIA v1.0).
 
-| Sibling | Role | Contract / integration |
-|---------|------|--------------------------|
-| [`taras-polishchuk/workspace-os`](https://github.com/taras-polishchuk/workspace-os) | Local Python kernel (LTS) | Provides the `MissionSource` boundary this platform implements. The substrate beneath this runtime. |
-| [`taras-polishchuk/operatoros-framework`](https://github.com/taras-polishchuk/operatoros-framework) | Operator CLI (Node.js 20+, MIT) | The single-operator CLI that orchestrates missions on top of this platform. |
-| [`taras-polishchuk/taras-polishchuk`](https://github.com/taras-polishchuk/taras-polishchuk) | Public profile surface | Authoritative GitHub profile + PPIA specification. |
+| Sibling                                                                                             | Role                            | Contract / integration                                                                              |
+| --------------------------------------------------------------------------------------------------- | ------------------------------- | --------------------------------------------------------------------------------------------------- |
+| [`taras-polishchuk/workspace-os`](https://github.com/taras-polishchuk/workspace-os)                 | Local Python kernel (LTS)       | Provides the `MissionSource` boundary this platform implements. The substrate beneath this runtime. |
+| [`taras-polishchuk/operatoros-framework`](https://github.com/taras-polishchuk/operatoros-framework) | Operator CLI (Node.js 20+, MIT) | The single-operator CLI that orchestrates missions on top of this platform.                         |
+| [`taras-polishchuk/taras-polishchuk`](https://github.com/taras-polishchuk/taras-polishchuk)         | Public profile surface          | Authoritative GitHub profile + PPIA specification.                                                  |
 
 Cross-references follow the substrate-first ordering: Workspace OS → this platform → OperatorOS Framework. The full four-subsystem model (Workspace OS + this + Knowledge OS + AI Factory → AI Ecosystem v1.0) is documented in `taras-polishchuk/taras-polishchuk/blob/master/PUBLIC_PORTFOLIO_INFORMATION_ARCHITECTURE.md` §4.
 
 ---
 
 [OperatorOS Platform on GitHub](https://github.com/taras-polishchuk/operatoros-platform)
-
