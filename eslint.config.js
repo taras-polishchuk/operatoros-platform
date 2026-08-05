@@ -39,7 +39,7 @@ export default tseslint.config(
       // Globs are NOT supported by `project` — only explicit file paths.
       parserOptions: {
         project: [
-          './tsconfig.json',
+          './tsconfig.lint.json',
           './apps/cli/tsconfig.json',
           './apps/smoke/tsconfig.json',
           './packages/agent-execution/tsconfig.json',

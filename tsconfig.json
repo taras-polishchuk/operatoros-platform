@@ -4,12 +4,6 @@
     "noEmit": true,
     "types": ["node", "vitest/globals"]
   },
-  "include": [
-    "tooling/**/*.ts",
-    "packages/**/*.ts",
-    "apps/**/*.ts",
-    "spikes/**/*.ts",
-    "vitest.config.ts",
-    "eslint.config.js"
-  ]
+  "include": ["tooling/**/*.ts", "vitest.config.ts"],
+  "exclude": ["packages/**", "apps/**", "spikes/**"]
 }

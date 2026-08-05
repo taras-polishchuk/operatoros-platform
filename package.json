@@ -34,7 +34,7 @@
     "sbom": "node tooling/sbom.mjs",
     "demo": "bash scripts/demo.sh",
     "clean-tree:verify": "node tooling/verify-clean-tree.mjs",
-    "quality": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test:coverage && pnpm build && pnpm contracts:verify && pnpm architecture:check"
+    "quality": "pnpm format:check && pnpm lint && pnpm build && pnpm typecheck && pnpm test:coverage && pnpm contracts:verify && pnpm architecture:check"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.2",
