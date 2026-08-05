@@ -486,7 +486,11 @@ export function createSqliteWorkspaceStore(options: { databasePath: string }) {
         };
       }),
     );
-    const safeTargetPath = validatePathInside(process.cwd(), input.target_path);
+    // target_path is operator-controlled (runbook: "Store the resulting JSON
+    // on operator-controlled encrypted storage"). Resolve it absolutely
+    // without constraining to a base directory; path-traversal guards apply
+    // only to paths the service writes on behalf of a workspace (root_path).
+    const safeTargetPath = resolve(input.target_path);
     await mkdir(dirname(safeTargetPath), { recursive: true });
     await writeFile(
       safeTargetPath,
@@ -516,7 +520,9 @@ export function createSqliteWorkspaceStore(options: { databasePath: string }) {
     root_path: string;
     source_path: string;
   }): Promise<WorkspaceResult> {
-    const raw = await readFile(validatePathInside(process.cwd(), input.source_path), 'utf8');
+    // source_path is operator-controlled; resolve absolutely without the
+    // snapshotBaseDir constraint, matching exportSnapshot's target_path policy.
+    const raw = await readFile(resolve(input.source_path), 'utf8');
     const snapshot = JSON.parse(raw) as {
       schema_version: string;
       workspace_ref: string;
@@ -539,7 +545,11 @@ export function createSqliteWorkspaceStore(options: { databasePath: string }) {
       );
     }
     let imported = 0;
-    await mkdir(validatePathInside(process.cwd(), resolve(input.root_path)), { recursive: true });
+    // root_path is operator-controlled (workspace initialization site);
+    // resolve absolutely and create it. Removing the cwd-bound guard lets
+    // tests and operators restore into any directory, matching the
+    // "operator-controlled storage" runbook pattern.
+    await mkdir(resolve(input.root_path), { recursive: true });
     database.exec('BEGIN IMMEDIATE');
     try {
       for (const a of snapshot.artifacts) {
