@@ -53,7 +53,6 @@ export function buildContext(options: CliRunOptions = {}): CliContext {
     workspaceRoot: root,
     cleanup: async () => {
       // Workspace data is user-owned and is never removed by the CLI.
-      void options.cleanupOnExit;
       await Promise.resolve();
     },
   };
@@ -80,16 +79,14 @@ export async function buildDispatcher(
     databasePath: join(workspaceRoot, 'workspace.sqlite'),
     snapshotsDirectory: join(workspaceRoot, 'snapshots'),
   });
-  const governance = createSqliteGovernanceStore({
+  // Opens governance.sqlite so the store exists in the workspace.
+  createSqliteGovernanceStore({
     databasePath: join(workspaceRoot, 'governance.sqlite'),
   });
   const execution = createExecutionService({
     databasePath: join(workspaceRoot, 'execution.sqlite'),
     evidence,
   });
-  // Reference each store so it remains reachable and not flagged as unused.
-  void governance;
-
   // The interface-host's LocalExecutionService structural type expects
   // startRunWithMissionRecord on BOTH the service and the store. The real
   // createExecutionService only exposes it on the service — mirror it on
