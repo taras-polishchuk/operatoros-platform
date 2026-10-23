@@ -16,7 +16,7 @@
     },
     "architecture-validation.md": {
       "source": "docs/authorities/architecture-validation.md",
-      "sha256": "a2ff530baf89fb15c619e6c88725e6a0862c5a436975c8d8352f44f4bb8804e3"
+      "sha256": "2de56223b50cb008deb772022a7d33938efe514959b4d2047b24046103068908"
     },
     "implementation-roadmap.md": {
       "source": "docs/authorities/implementation-roadmap.md",
