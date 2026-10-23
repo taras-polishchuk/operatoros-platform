@@ -1,4 +1,3 @@
-import { createHash } from 'node:crypto';
 import { mkdir, readFile, readdir, stat, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 
@@ -139,12 +138,11 @@ export function createInProcessImporter(options: {
     workspaces: ImportedWorkspaceSummary[];
   }> {
     const index = await discoverV08Source(options.readonlyV08RootPath);
-    const initialized = options.workspaceService.initializeWorkspace({
+    options.workspaceService.initializeWorkspace({
       workspace_ref: input.workspace_ref,
       root_path: options.defaultImportRootPath,
       subject_identity_ref: options.importerOperatorRef,
     });
-    void initialized;
     const warnings: string[] = [];
     // We translate v0.8 entities into OperatorOS Platform Artifact records.
     // For now: 1 artifact per v0.8 workspace, plus a manifest artifact recording
@@ -179,7 +177,6 @@ export function createInProcessImporter(options: {
           : workspaceFile.replace(/\.json$/u, '');
       const safeSourceId = sourceId.replace(/[^a-zA-Z0-9_-]/gu, '_');
       const artifactEntityId = `imported_workspace_${safeSourceId}`;
-      const contentDigest = createHash('sha256').update(sourceContent).digest('hex');
       const targetContentPath = join(options.defaultImportRootPath, `${artifactEntityId}.json`);
       await mkdir(options.defaultImportRootPath, { recursive: true });
       await writeFile(targetContentPath, sourceContent);
@@ -200,7 +197,6 @@ export function createInProcessImporter(options: {
         state: 'imported',
         imported_entities: 1,
       });
-      void contentDigest;
     }
     if (workspaces.length !== index.workspace_count) {
       throw new Error(
@@ -216,7 +212,6 @@ export function createInProcessImporter(options: {
       content: Buffer.from(JSON.stringify(index), 'utf8'),
       subject_identity_ref: options.importerOperatorRef,
     });
-    void warnings;
     return {
       outcome: 'committed',
       record: {
