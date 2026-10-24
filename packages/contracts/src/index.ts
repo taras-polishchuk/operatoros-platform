@@ -1,5 +1,4 @@
 import { z } from 'zod';
-import { zodToJsonSchema } from 'zod-to-json-schema';
 
 export const publicContractVersion = '1.0.0' as const;
 
@@ -13,7 +12,7 @@ const dataClassificationValues = [
 const dataClassification = z.enum(dataClassificationValues);
 
 const nonEmptyString = z.string().min(1);
-const timestamp = z.string().datetime({ offset: true });
+const timestamp = z.iso.datetime({ offset: true });
 const sha256 = z.string().regex(/^[0-9a-f]{64}$/);
 const identityReference = z.string().regex(/^(identity|service|machine):\/\//);
 const workspaceReference = z.string().regex(/^workspace[_:/-]/);
@@ -738,7 +737,7 @@ const flatContractRegistry = {
 
 export const contractRegistry: SchemaMap = flatContractRegistry;
 
-function lookup(id: keyof typeof contractRegistry): z.ZodTypeAny {
+function lookup(id: keyof typeof contractRegistry): z.ZodType {
   const value = contractRegistry[id];
   if (!value) {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-conversion
@@ -747,7 +746,7 @@ function lookup(id: keyof typeof contractRegistry): z.ZodTypeAny {
   return value;
 }
 
-export function getContract(id: keyof typeof contractRegistry): z.ZodTypeAny {
+export function getContract(id: keyof typeof contractRegistry): z.ZodType {
   return lookup(id);
 }
 
@@ -755,16 +754,31 @@ export function parseContract(id: keyof typeof contractRegistry, value: unknown)
   return lookup(id).parse(value);
 }
 
-function asJsonSchema(schema: z.ZodTypeAny, name: string): Record<string, unknown> {
-  const out: unknown = zodToJsonSchema(schema as never, { name, target: 'jsonSchema7' });
-  const result = out as Record<string, unknown>;
-  if (typeof result.title !== 'string') {
-    result.title = name;
-  }
-  return result;
+// Draft-07 envelope kept stable for consumers: { $ref: '#/definitions/<name>', definitions: { <name>: body } }.
+// zod 4 emits the body natively (zod-to-json-schema does not support zod 4 and produced empty schemas).
+function asJsonSchema(schema: z.ZodType, name: string): Record<string, unknown> {
+  const body = z.toJSONSchema(schema, {
+    target: 'draft-7',
+    io: 'input',
+    unrepresentable: 'any',
+  }) as Record<string, unknown>;
+  const {
+    $schema,
+    definitions: nested,
+    ...rest
+  } = body as {
+    $schema?: string;
+    definitions?: Record<string, unknown>;
+  } & Record<string, unknown>;
+  return {
+    $ref: `#/definitions/${name}`,
+    definitions: { [name]: rest, ...(nested ?? {}) },
+    $schema: $schema ?? 'http://json-schema.org/draft-07/schema#',
+    title: name,
+  };
 }
 
-type SchemaMap = Record<string, z.ZodTypeAny>;
+type SchemaMap = Record<string, z.ZodType>;
 
 export function toJsonSchemas(): {
   contracts: Record<string, unknown>;

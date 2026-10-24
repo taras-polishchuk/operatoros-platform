@@ -17,23 +17,27 @@
           "pattern": "^workspace[_:/-]"
         },
         "filter": {
+          "default": {},
           "type": "object",
-          "additionalProperties": {},
-          "default": {}
+          "propertyNames": {
+            "type": "string"
+          },
+          "additionalProperties": {}
         },
         "cursor": {
-          "$ref": "#/definitions/envelope.query/properties/query_type"
+          "type": "string",
+          "minLength": 1
         },
         "limit": {
+          "default": 50,
           "type": "integer",
           "exclusiveMinimum": 0,
-          "maximum": 1000,
-          "default": 50
+          "maximum": 1000
         },
         "projection_freshness_requirement": {
+          "default": "either",
           "type": "string",
-          "enum": ["authoritative", "rebuildable-projection", "either"],
-          "default": "either"
+          "enum": ["authoritative", "rebuildable-projection", "either"]
         }
       },
       "required": ["query_type", "subject_identity_ref", "workspace_ref"],
