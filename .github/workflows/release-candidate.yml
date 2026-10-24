@@ -39,7 +39,7 @@ jobs:
             "workflow_run=${GITHUB_RUN_ID}" \
             > artifacts/reports/release-candidate/identity.txt
       - name: Upload validation evidence
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: operatoros-${{ inputs.candidate }}-${{ github.sha }}
           path: |
