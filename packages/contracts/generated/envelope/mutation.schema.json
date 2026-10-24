@@ -9,34 +9,42 @@
           "minLength": 1
         },
         "mutation_id": {
-          "$ref": "#/definitions/envelope.mutation/properties/envelope_id"
+          "type": "string",
+          "minLength": 1
         },
         "command_id": {
-          "$ref": "#/definitions/envelope.mutation/properties/envelope_id"
+          "type": "string",
+          "minLength": 1
         },
         "request_key": {
-          "$ref": "#/definitions/envelope.mutation/properties/envelope_id"
+          "type": "string",
+          "minLength": 1
         },
         "coordinator_component": {
           "type": "string",
           "enum": ["workspace-service", "execution-service"]
         },
         "aggregate_ref": {
-          "$ref": "#/definitions/envelope.mutation/properties/envelope_id"
+          "type": "string",
+          "minLength": 1
         },
         "expected_version": {
           "type": "integer",
-          "minimum": 0
+          "minimum": 0,
+          "maximum": 9007199254740991
         },
         "intended_record_version": {
-          "$ref": "#/definitions/envelope.mutation/properties/expected_version"
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
         },
         "required_event_ids": {
+          "minItems": 1,
           "type": "array",
           "items": {
-            "$ref": "#/definitions/envelope.mutation/properties/envelope_id"
-          },
-          "minItems": 1
+            "type": "string",
+            "minLength": 1
+          }
         },
         "idempotency_result_digest": {
           "type": "string",
@@ -55,13 +63,18 @@
         },
         "prepared_at": {
           "type": "string",
-          "format": "date-time"
+          "format": "date-time",
+          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
         },
         "committed_at": {
-          "$ref": "#/definitions/envelope.mutation/properties/prepared_at"
+          "type": "string",
+          "format": "date-time",
+          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
         },
         "acknowledged_at": {
-          "$ref": "#/definitions/envelope.mutation/properties/prepared_at"
+          "type": "string",
+          "format": "date-time",
+          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
         },
         "reconciliation": {
           "type": "string",

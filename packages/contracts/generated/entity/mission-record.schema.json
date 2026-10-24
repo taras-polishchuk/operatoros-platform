@@ -18,17 +18,22 @@
         },
         "record_version": {
           "type": "integer",
-          "minimum": 0
+          "minimum": 0,
+          "maximum": 9007199254740991
         },
         "created_at": {
           "type": "string",
-          "format": "date-time"
+          "format": "date-time",
+          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
         },
         "updated_at": {
-          "$ref": "#/definitions/entity.mission-record/properties/created_at"
+          "type": "string",
+          "format": "date-time",
+          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
         },
         "supersedes": {
-          "$ref": "#/definitions/entity.mission-record/properties/entity_id"
+          "type": "string",
+          "minLength": 1
         },
         "kind": {
           "type": "string",
@@ -39,27 +44,36 @@
           "enum": ["open", "sealing", "sealed", "corrected"]
         },
         "run_ref": {
-          "$ref": "#/definitions/entity.mission-record/properties/entity_id"
+          "type": "string",
+          "minLength": 1
         },
         "created_event_id": {
-          "$ref": "#/definitions/entity.mission-record/properties/entity_id"
+          "type": "string",
+          "minLength": 1
         },
         "terminal_event_id": {
-          "$ref": "#/definitions/entity.mission-record/properties/entity_id"
+          "type": "string",
+          "minLength": 1
         },
         "terminal_outcome": {
           "type": "string",
           "enum": ["succeeded", "failed", "cancelled"]
         },
         "referenced_artifact_refs": {
+          "default": [],
           "type": "array",
           "items": {
-            "$ref": "#/definitions/entity.mission-record/properties/entity_id"
-          },
-          "default": []
+            "type": "string",
+            "minLength": 1
+          }
         },
         "pinned_policy_refs": {
-          "$ref": "#/definitions/entity.mission-record/properties/referenced_artifact_refs"
+          "default": [],
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
         },
         "integrity_digest": {
           "type": "string",

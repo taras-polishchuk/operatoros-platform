@@ -193,6 +193,17 @@ describe('Domain contracts', () => {
     expect(out.contracts['entity.workspace']).toBeDefined();
   });
 
+  it('every JSON Schema has a non-empty body (guards against a silent generator break)', () => {
+    const out = toJsonSchemas();
+    for (const [id, schema] of Object.entries(out.contracts)) {
+      const s = schema as { $ref: string; definitions: Record<string, Record<string, unknown>> };
+      expect(s.$ref, id).toBe(`#/definitions/${id}`);
+      const body = s.definitions[id];
+      expect(body, id).toBeDefined();
+      expect(Object.keys(body ?? {}).length, id).toBeGreaterThan(0);
+    }
+  });
+
   it('Agent Registration requires identity_class matching user/service/machine', () => {
     const base = domainEntityFixtures['agent-registration'];
     expect(base.identity_class).toMatch(/^(user|service|machine)$/u);
